@@ -1,0 +1,762 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+    <model name='nanorobot'>
+        <link name='/base_footprint'>
+            <inertial>
+                <pose>-0.021838 0.000158 0.053435 0 -0 0</pose>
+                <mass>0.204024</mass>
+                <inertia>
+                    <ixx>0.00339246</ixx>
+                    <ixy>-6.89342e-07</ixy>
+                    <ixz>6.85388e-05</ixz>
+                    <iyy>0.00210538</iyy>
+                    <iyz>-7.91056e-06</iyz>
+                    <izz>0.00297338</izz>
+                </inertia>
+            </inertial>
+            <!-- <sensor name='csi Camera' type='camera'>
+                <always_on>1</always_on>
+                <visualize>0</visualize>
+                <camera>
+                    <horizontal_fov>1.0856</horizontal_fov>
+                    <image>
+                        <width>640</width>
+                        <height>480</height>
+                        <format>R8G8B8</format>
+                    </image>
+                    <clip>
+                        <near>0.03</near>
+                        <far>100</far>
+                    </clip>
+                </camera>
+                <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
+                    <alwaysOn>1</alwaysOn>
+                    <updateRate>30.0</updateRate>
+                    <cameraName>/</cameraName>
+                    <frameName>base_camera_link</frameName>
+                    <imageTopicName>image_raw</imageTopicName>
+                    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                    <hackBaseline>0.07</hackBaseline>
+                    <distortionK1>0.0</distortionK1>
+                    <distortionK2>0.0</distortionK2>
+                    <distortionK3>0.0</distortionK3>
+                    <distortionT1>0.0</distortionT1>
+                    <distortionT2>0.0</distortionT2>
+                    <robotNamespace></robotNamespace>
+                </plugin>
+                <pose>0.0277 0 0.0743 0 0.2 0</pose>
+            </sensor>
+            <sensor name='imu' type='imu'>
+                <always_on>1</always_on>
+                <visualize>0</visualize>
+                <pose>-0.056956 -0.005954 0.084756 0 -0 0</pose>
+                <imu/>
+            </sensor>
+            <sensor name='rplidar_sensor' type='ray'>
+                <visualize>0</visualize>
+                <update_rate>7</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>720</samples>
+                            <resolution>0.5</resolution>
+                            <min_angle>0</min_angle>
+                            <max_angle>6.28319</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>1</samples>
+                            <min_angle>0</min_angle>
+                            <max_angle>0</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.12</min>
+                        <max>12</max>
+                        <resolution>0.015</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </ray>
+                <plugin name='gazebo_ros_rplidar_controller' filename='libgazebo_ros_laser.so'>
+                    <topicName>scan</topicName>
+                    <frameName>base_laser_link</frameName>
+                    <robotNamespace></robotNamespace>
+                </plugin>
+                <pose>-0.012251 0 0.138 0 -0 0</pose>
+            </sensor> -->
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <pose>0 0 0 0 -0 0</pose>
+            <visual name='/base_footprint_fixed_joint_lump__/base_link_visual'>
+                <pose>0 0 0.012 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/base_link.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/DarkGrey</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='/base_footprint_fixed_joint_lump__/ball_wheel_link_visual_1'>
+                <pose>-0.06445 0 0.0092 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/ball_wheel_link.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='/base_footprint_fixed_joint_lump__/base_camera_link_visual_2'>
+                <pose>0.0277 0 0.0743 0 0.2 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/base_camera_link.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='/base_footprint_fixed_joint_lump__/imu_visual_3'>
+                <pose>-0.056956 -0.005954 0.084756 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/imu.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='/base_footprint_fixed_joint_lump__/base_laser_link_visual_4'>
+                <pose>-0.012251 0 0.138 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/base_laser_link.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <collision name='/base_footprint_fixed_joint_lump__/base_link_collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0.012 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/base_link.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='/base_footprint_fixed_joint_lump__/ball_wheel_link_collision_1'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>-0.06445 0 0.0092 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/ball_wheel_link.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.1</mu>
+                            <mu2>0.1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>500000</kp>
+                            <kd>100</kd>
+                            <max_vel>1</max_vel>
+                            <min_depth>0.001</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>500000</kp>
+                            <kd>100</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='/base_footprint_fixed_joint_lump__/base_camera_link_collision_2'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0.0277 0 0.0743 0 0.2 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/base_camera_link.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='/base_footprint_fixed_joint_lump__/imu_collision_3'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>-0.056956 -0.005954 0.084756 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/imu.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='/base_footprint_fixed_joint_lump__/base_laser_link_collision_4'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>-0.012251 0 0.138 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/base_laser_link.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+        </link>
+        <link name='/left_wheel_link'>
+            <pose>0 0.0658 0.03475 -1.5708 0 0</pose>
+            <inertial>
+                <pose>-0 0 0.017494 0 -0 0</pose>
+                <mass>0.0561341</mass>
+                <inertia>
+                    <ixx>2.45284e-05</ixx>
+                    <ixy>1.79488e-21</ixy>
+                    <ixz>7.36303e-18</ixz>
+                    <iyy>2.45284e-05</iyy>
+                    <iyz>1.73397e-17</iyz>
+                    <izz>4.23355e-05</izz>
+                </inertia>
+            </inertial>
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <visual name='/left_wheel_link_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/left_wheel_link.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <collision name='/left_wheel_link_collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/left_wheel_link.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.5</mu>
+                            <mu2>0.5</mu2>
+                            <fdir1>1 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>500000</kp>
+                            <kd>10</kd>
+                            <max_vel>1</max_vel>
+                            <min_depth>0.001</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>500000</kp>
+                            <kd>10</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+        </link>
+        <link name='/right_wheel_link'>
+            <pose>-0 -0.0658 0.03475 1.5708 -0 -3.14159</pose>
+            <inertial>
+                <pose>0 -0 -0.017494 0 -0 0</pose>
+                <mass>0.0561341</mass>
+                <inertia>
+                    <ixx>2.45284e-05</ixx>
+                    <ixy>-1.10856e-21</ixy>
+                    <ixz>-7.37238e-18</ixz>
+                    <iyy>2.45284e-05</iyy>
+                    <iyz>1.73406e-17</iyz>
+                    <izz>4.23355e-05</izz>
+                </inertia>
+            </inertial>
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <visual name='/right_wheel_link_visual'>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://nanorobot/meshes/right_wheel_link.STL</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <collision name='/right_wheel_link_collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://nanorobot/meshes/right_wheel_link.STL</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.5</mu>
+                            <mu2>0.5</mu2>
+                            <fdir1>1 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>500000</kp>
+                            <kd>10</kd>
+                            <max_vel>1</max_vel>
+                            <min_depth>0.001</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>500000</kp>
+                            <kd>10</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+        </link>
+        <joint name='left_wheel_joint' type='revolute'>
+            <parent>/base_footprint</parent>
+            <child>/left_wheel_link</child>
+            <pose>0 -0 0 0 -0 0</pose>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                    <effort>100</effort>
+                    <velocity>100</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                    <damping>0</damping>
+                    <friction>0</friction>
+                </dynamics>
+            </axis>
+            <physics>
+                <ode>
+                    <limit>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </limit>
+                    <suspension>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </suspension>
+                </ode>
+            </physics>
+        </joint>
+        <joint name='right_wheel_joint' type='revolute'>
+            <parent>/base_footprint</parent>
+            <child>/right_wheel_link</child>
+            <pose>0 0 -0 0 -0 0</pose>
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                    <effort>100</effort>
+                    <velocity>100</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                    <damping>0</damping>
+                    <friction>0</friction>
+                </dynamics>
+            </axis>
+            <physics>
+                <ode>
+                    <limit>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </limit>
+                    <suspension>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </suspension>
+                </ode>
+            </physics>
+        </joint>
+        <static>0</static>
+        <allow_auto_disable>1</allow_auto_disable>
+        <plugin name='NanoRobot_controller' filename='libgazebo_ros_diff_drive.so'>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <odometrySource>world</odometrySource>
+            <publishOdomTF>1</publishOdomTF>
+            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <publishWheelTF>0</publishWheelTF>
+            <publishTf>1</publishTf>
+            <publishWheelJointState>1</publishWheelJointState>
+            <legacyMode>0</legacyMode>
+            <updateRate>100</updateRate>
+            <leftJoint>left_wheel_joint</leftJoint>
+            <rightJoint>right_wheel_joint</rightJoint>
+            <wheelSeparation>0.160</wheelSeparation>
+            <wheelDiameter>0.067</wheelDiameter>
+            <wheelAcceleration>10</wheelAcceleration>
+            <wheelTorque>100</wheelTorque>
+            <rosDebugLevel>na</rosDebugLevel>
+            <robotNamespace></robotNamespace>
+        </plugin>
+        <!-- <plugin name='imu_plugin' filename='libgazebo_ros_imu.so'>
+            <alwaysOn>1</alwaysOn>
+            <frameName>imu</frameName>
+            <topicName>imu</topicName>
+            <serviceName>imu_service</serviceName>
+            <gaussianNoise>0.0</gaussianNoise>
+            <updateRate>0</updateRate>
+            <imu>
+                <noise>
+                    <type>gaussian</type>
+                    <rate>
+                        <mean>0.0</mean>
+                        <stddev>2e-4</stddev>
+                        <bias_mean>0.0000075</bias_mean>
+                        <bias_stddev>0.0000008</bias_stddev>
+                    </rate>
+                    <accel>
+                        <mean>0.0</mean>
+                        <stddev>1.7e-2</stddev>
+                        <bias_mean>0.1</bias_mean>
+                        <bias_stddev>0.001</bias_stddev>
+                    </accel>
+                </noise>
+            </imu>
+            <robotNamespace></robotNamespace>
+            <bodyName>/base_footprint</bodyName>
+            <xyzOffset>0.056956 0.0059543 -0.084756</xyzOffset>
+            <rpyOffset>0 -9.14011e-18 0</rpyOffset>
+        </plugin> -->
+    </model>
+</sdf>

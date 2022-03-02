@@ -1,0 +1,31 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/chh3213/ros_wc/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/chh3213/ros_wc/src/cdpr/cdpr/include/**",
+        "/home/chh3213/ros_wc/src/cdpr_gazebo/src/cdpr_gazebo/include/**",
+        "/home/chh3213/ros_wc/src/cdpr_uav_ddrive/include/**",
+        "/home/chh3213/ros_wc/src/iq_gnc/include/**",
+        "/home/chh3213/ros_wc/src/mav_comm/mav_msgs/include/**",
+        "/home/chh3213/ros_wc/src/mav_comm/mav_planning_msgs/include/**",
+        "/home/chh3213/ros_wc/src/my_turtlebot2_training/include/**",
+        "/home/chh3213/ros_wc/src/offboard/include/**",
+        "/home/chh3213/ros_wc/src/rotors_simulator/rotors_control/include/**",
+        "/home/chh3213/ros_wc/src/rotors_simulator/rotors_gazebo_plugins/include/**",
+        "/home/chh3213/ros_wc/src/rotors_simulator/rotors_hil_interface/include/**",
+        "/home/chh3213/ros_wc/src/rotors_simulator/rotors_joy_interface/include/**",
+        "/home/chh3213/ros_wc/src/ugv_uav/include/**",
+        "/home/chh3213/ros_wc/src/cdpr/workspace_determination/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

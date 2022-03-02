@@ -1,0 +1,742 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+    <model name='DDR_1'>
+        <link name='base_footprint'>
+            <inertial>
+                <pose>0.0365 0 0.039673 0 -0 0</pose>
+                <mass>0.26</mass>
+                <inertia>
+                    <ixx>0.000321609</ixx>
+                    <ixy>0</ixy>
+                    <ixz>-6.42075e-05</ixz>
+                    <iyy>0.00113205</iyy>
+                    <iyz>0</iyz>
+                    <izz>0.0010641</izz>
+                </inertia>
+            </inertial>
+            <!-- <sensor name='camera1' type='camera'>
+                <update_rate>30</update_rate>
+                <camera name='head'>
+                    <horizontal_fov>1.39626</horizontal_fov>
+                    <image>
+                        <width>800</width>
+                        <height>800</height>
+                        <format>R8G8B8</format>
+                    </image>
+                    <clip>
+                        <near>0.02</near>
+                        <far>300</far>
+                    </clip>
+                </camera>
+                <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
+                    <alwaysOn>1</alwaysOn>
+                    <updateRate>0.0</updateRate>
+                    <cameraName>ddr_1/camera1</cameraName>
+                    <imageTopicName>image_raw</imageTopicName>
+                    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                    <frameName>camera_link</frameName>
+                    <hackBaseline>0.07</hackBaseline>
+                    <distortionK1>0.0</distortionK1>
+                    <distortionK2>0.0</distortionK2>
+                    <distortionK3>0.0</distortionK3>
+                    <distortionT1>0.0</distortionT1>
+                    <distortionT2>0.0</distortionT2>
+                    <robotNamespace>/</robotNamespace>
+                </plugin>
+                <pose>0.095 0 0.06 0 -0 0</pose>
+            </sensor>
+            <sensor name='camera1' type='camera'>
+                <update_rate>30</update_rate>
+                <camera name='head'>
+                    <horizontal_fov>1.39626</horizontal_fov>
+                    <image>
+                        <width>800</width>
+                        <height>800</height>
+                        <format>R8G8B8</format>
+                    </image>
+                    <clip>
+                        <near>0.02</near>
+                        <far>300</far>
+                    </clip>
+                </camera>
+                <plugin name='camera_controller' filename='libgazebo_ros_camera.so'>
+                    <alwaysOn>1</alwaysOn>
+                    <updateRate>0.0</updateRate>
+                    <cameraName>ddr_1/camera1</cameraName>
+                    <imageTopicName>image_raw</imageTopicName>
+                    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                    <frameName>camera_link</frameName>
+                    <hackBaseline>0.07</hackBaseline>
+                    <distortionK1>0.0</distortionK1>
+                    <distortionK2>0.0</distortionK2>
+                    <distortionK3>0.0</distortionK3>
+                    <distortionT1>0.0</distortionT1>
+                    <distortionT2>0.0</distortionT2>
+                    <robotNamespace>/</robotNamespace>
+                </plugin>
+                <pose>0.095 0 0.06 0 -0 0</pose>
+            </sensor>
+            <sensor name='head_hokuyo_sensor' type='ray'>
+                <visualize>0</visualize>
+                <update_rate>40</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>720</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.5708</min_angle>
+                            <max_angle>1.5708</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>1</samples>
+                            <min_angle>0</min_angle>
+                            <max_angle>0</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.1</min>
+                        <max>30</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </ray>
+                <plugin name='gazebo_ros_head_hokuyo_controller' filename='libgazebo_ros_laser.so'>
+                    <topicName>/ddr_1/laser/scan</topicName>
+                    <frameName>hokuyo_link</frameName>
+                    <robotNamespace>/</robotNamespace>
+                </plugin>
+                <pose>0.035 0 0.1135 0 -0 0</pose>
+            </sensor>
+            <sensor name='head_hokuyo_sensor' type='ray'>
+                <visualize>0</visualize>
+                <update_rate>40</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>720</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-1.5708</min_angle>
+                            <max_angle>1.5708</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>1</samples>
+                            <min_angle>0</min_angle>
+                            <max_angle>0</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.1</min>
+                        <max>30</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </ray>
+                <plugin name='gazebo_ros_head_hokuyo_controller' filename='libgazebo_ros_laser.so'>
+                    <topicName>/ddr_1/laser/scan</topicName>
+                    <frameName>hokuyo_link</frameName>
+                    <robotNamespace>/</robotNamespace>
+                </plugin>
+                <pose>0.035 0 0.1135 0 -0 0</pose>
+            </sensor> -->
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <pose>0 0 0 0 -0 0</pose>
+            <visual name='base_footprint_fixed_joint_lump__chassis_visual'>
+                <pose>0 0 0.032 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://DDR_1/meshes/chassis.dae</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/Red</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='base_footprint_fixed_joint_lump__camera_link_visual_1'>
+                <pose>0.095 0 0.06 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.04 0.08 0.03</size>
+                    </box>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/Green</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='base_footprint_fixed_joint_lump__caster_wheel_visual_2'>
+                <pose>0.091 0 0.042 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://DDR_1/meshes/caster_wheel.dae</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/Chrome</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <visual name='base_footprint_fixed_joint_lump__hokuyo_link_visual_3'>
+                <pose>0.035 0 0.1135 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://DDR_1/meshes/hokuyo.dae</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <collision name='base_footprint_fixed_joint_lump__chassis_collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0.032 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://DDR_1/meshes/chassis.dae</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.3</mu>
+                            <mu2>0.3</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='base_footprint_fixed_joint_lump__camera_link_collision_1'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0.095 0 0.06 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.04 0.08 0.03</size>
+                    </box>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0.2</mu>
+                            <mu2>0.2</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='base_footprint_fixed_joint_lump__caster_wheel_collision_2'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0.091 0 0.042 0 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <uri>model://DDR_1/meshes/caster_wheel.dae</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>0</mu>
+                            <mu2>0</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+06</kp>
+                            <kd>100</kd>
+                            <max_vel>1</max_vel>
+                            <min_depth>0.001</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+06</kp>
+                            <kd>100</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+            <collision name='base_footprint_fixed_joint_lump__hokuyo_link_collision_3'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0.035 0 0.1135 0 -0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.05 0.05 0.07</size>
+                    </box>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                            <max_vel>0.01</max_vel>
+                            <min_depth>0</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+13</kp>
+                            <kd>1</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+        </link>
+        <link name='left_wheel'>
+            <pose>0 0.063 0.032 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 1.5708 -0 0</pose>
+                <mass>0.05</mass>
+                <inertia>
+                    <ixx>1.56167e-05</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>1.56167e-05</iyy>
+                    <iyz>0</iyz>
+                    <izz>2.56e-05</izz>
+                </inertia>
+            </inertial>
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <visual name='left_wheel_visual'>
+                <pose>0 0 0 1.5708 -0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://DDR_1/meshes/left_wheel.dae</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <collision name='left_wheel_collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0 1.5708 -0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <radius>0.032</radius>
+                        <length>0.026</length>
+                    </cylinder>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+07</kp>
+                            <kd>100</kd>
+                            <max_vel>1</max_vel>
+                            <min_depth>0.001</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+07</kp>
+                            <kd>100</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+        </link>
+        <link name='right_wheel'>
+            <pose>0 -0.063 0.032 0 -0 0</pose>
+            <inertial>
+                <pose>0 0 0 -1.5708 0 0</pose>
+                <mass>0.05</mass>
+                <inertia>
+                    <ixx>1.56167e-05</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>1.56167e-05</iyy>
+                    <iyz>0</iyz>
+                    <izz>2.56e-05</izz>
+                </inertia>
+            </inertial>
+            <self_collide>0</self_collide>
+            <enable_wind>0</enable_wind>
+            <kinematic>0</kinematic>
+            <visual name='right_wheel_visual'>
+                <pose>0 0 0 -1.5708 0 0</pose>
+                <geometry>
+                    <mesh>
+                        <scale>1 1 1</scale>
+                        <uri>model://DDR_1/meshes/right_wheel.dae</uri>
+                    </mesh>
+                </geometry>
+                <material>
+                    <script>
+                        <name>Gazebo/FlatBlack</name>
+                        <uri>file://media/materials/scripts/gazebo.material</uri>
+                    </script>
+                    <shader type='pixel'/>
+                </material>
+                <transparency>0</transparency>
+                <cast_shadows>1</cast_shadows>
+            </visual>
+            <collision name='right_wheel_collision'>
+                <laser_retro>0</laser_retro>
+                <max_contacts>10</max_contacts>
+                <pose>0 0 0 -1.5708 0 0</pose>
+                <geometry>
+                    <cylinder>
+                        <radius>0.032</radius>
+                        <length>0.026</length>
+                    </cylinder>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode>
+                            <mu>1</mu>
+                            <mu2>1</mu2>
+                            <fdir1>0 0 0</fdir1>
+                            <slip1>0</slip1>
+                            <slip2>0</slip2>
+                        </ode>
+                        <torsional>
+                            <coefficient>1</coefficient>
+                            <patch_radius>0</patch_radius>
+                            <surface_radius>0</surface_radius>
+                            <use_patch_radius>1</use_patch_radius>
+                            <ode>
+                                <slip>0</slip>
+                            </ode>
+                        </torsional>
+                    </friction>
+                    <bounce>
+                        <restitution_coefficient>0</restitution_coefficient>
+                        <threshold>1e+06</threshold>
+                    </bounce>
+                    <contact>
+                        <collide_without_contact>0</collide_without_contact>
+                        <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+                        <collide_bitmask>1</collide_bitmask>
+                        <ode>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+07</kp>
+                            <kd>100</kd>
+                            <max_vel>1</max_vel>
+                            <min_depth>0.001</min_depth>
+                        </ode>
+                        <bullet>
+                            <split_impulse>1</split_impulse>
+                            <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                            <soft_cfm>0</soft_cfm>
+                            <soft_erp>0.2</soft_erp>
+                            <kp>1e+07</kp>
+                            <kd>100</kd>
+                        </bullet>
+                    </contact>
+                </surface>
+            </collision>
+        </link>
+        <joint name='left_wheel_hinge' type='revolute'>
+            <parent>base_footprint</parent>
+            <child>left_wheel</child>
+            <pose>0 0 0 0 -0 0</pose>
+            <axis>
+                <xyz>0 1 0</xyz>
+                <limit>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                    <effort>0</effort>
+                    <velocity>0</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                    <damping>0</damping>
+                    <friction>0</friction>
+                </dynamics>
+            </axis>
+            <physics>
+                <ode>
+                    <limit>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </limit>
+                    <suspension>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </suspension>
+                </ode>
+            </physics>
+        </joint>
+        <joint name='right_wheel_hinge' type='revolute'>
+            <parent>base_footprint</parent>
+            <child>right_wheel</child>
+            <pose>0 0 0 0 -0 0</pose>
+            <axis>
+                <xyz>0 1 0</xyz>
+                <limit>
+                    <lower>-1e+16</lower>
+                    <upper>1e+16</upper>
+                    <effort>0</effort>
+                    <velocity>0</velocity>
+                </limit>
+                <dynamics>
+                    <spring_reference>0</spring_reference>
+                    <spring_stiffness>0</spring_stiffness>
+                    <damping>0</damping>
+                    <friction>0</friction>
+                </dynamics>
+            </axis>
+            <physics>
+                <ode>
+                    <limit>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </limit>
+                    <suspension>
+                        <cfm>0</cfm>
+                        <erp>0.2</erp>
+                    </suspension>
+                </ode>
+            </physics>
+        </joint>
+        <static>0</static>
+        <allow_auto_disable>1</allow_auto_disable>
+        <plugin name='differential_drive_controller' filename='libgazebo_ros_diff_drive.so'>
+            <robotNamespace>/</robotNamespace>
+            <alwaysOn>1</alwaysOn>
+            <updateRate>100</updateRate>
+            <leftJoint>left_wheel_hinge</leftJoint>
+            <rightJoint>right_wheel_hinge</rightJoint>
+            <wheelSeparation>0.045</wheelSeparation>
+            <wheelDiameter>0.064</wheelDiameter>
+            <torque>20</torque>
+            <commandTopic>ddr_1/cmd_vel</commandTopic>
+            <odometryTopic>ddr_1/odom</odometryTopic>
+            <odometryFrame>map</odometryFrame>
+            <robotBaseFrame>base_footprint</robotBaseFrame>
+            <legacyMode>0</legacyMode>
+            <rosDebugLevel>Debug</rosDebugLevel>
+            <publishWheelTF>1</publishWheelTF>
+            <publishWheelJointState>1</publishWheelJointState>
+            <wheelAcceleration>5</wheelAcceleration>
+            <wheelTorque>20</wheelTorque>
+            <publishTf>1</publishTf>
+            <odometrySource>encoder</odometrySource>
+        </plugin>
+        <!-- <plugin name='gazebo_ros_control' filename='libgazebo_ros_control.so'>
+            <robotNamespace>/ddr_1</robotNamespace>
+            <robotParam>/robot_description</robotParam>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+        </plugin>
+        <plugin name='ground_truth' filename='libgazebo_ros_p3d.so'>
+            <frameName>map</frameName>
+            <topicName>ddr_1/odom</topicName>
+            <updateRate>30.0</updateRate>
+            <gaussianNoise>0.0</gaussianNoise>
+            <robotNamespace>/</robotNamespace>
+            <bodyName>base_footprint</bodyName>
+            <xyzOffset>0 0 0</xyzOffset>
+            <rpyOffset>0 -0 0</rpyOffset>
+        </plugin>
+        <plugin name='imu_plugin' filename='libgazebo_ros_imu.so'>
+            <alwaysOn>1</alwaysOn>
+            <topicName>/ddr_1/imu</topicName>
+            <serviceName>imu_service</serviceName>
+            <gaussianNoise>0.0</gaussianNoise>
+            <updateRate>20.0</updateRate>
+            <robotNamespace>/</robotNamespace>
+            <bodyName>base_footprint</bodyName>
+            <xyzOffset>0 0 0</xyzOffset>
+            <rpyOffset>0 -0 0</rpyOffset>
+        </plugin> -->
+    </model>
+</sdf>

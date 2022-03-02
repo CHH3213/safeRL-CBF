@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="YHS" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="YHS">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home" local="$USER_HOME$" web="/home" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

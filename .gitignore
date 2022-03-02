@@ -1,0 +1,14 @@
+*.mat
+# Python:
+*.py[cod]
+*.pyc
+*.egg
+*.egg-info
+*.bin
+*.parm
+*.tlog
+*.raw
+*.out
+logs/
+terrain/
+__pycache__/
