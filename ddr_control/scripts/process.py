@@ -7,7 +7,7 @@
 @Author: chh3213
 ========Above the sun, full of fire!=============
 """
-import  numpy as np
+import numpy as np
 import numpy as np
 import random
 
@@ -53,5 +53,14 @@ import random
 # print(a[0:4, None])
 
 '''.测试dict'''
-walls = dict(wall_0=np.array([0, 3.1]), wall_1=np.array([0, -3.1]), wall_2=np.array([-3.1, 0]), wall_3=np.array([3.1, 0]))
+walls = dict(wall_0=np.array([0, 3.1]), wall_1=np.array([0, -3.1]), wall_2=np.array([-3.1, 0]),
+             wall_3=np.array([3.1, 0]))
 print(walls['wall_1'])
+
+import torch
+
+print(torch.cuda.is_available())
+a = torch.Tensor([1, 2])
+a = a.cuda()
+print(a)
+print(torch.__version__)
