@@ -82,12 +82,12 @@ class Gazebo_reset:
                 ddr.car_vel.publish(vel)
                 my_model.model_state.model_name = ddr.name
                 barrier = np.array([[1.5, 0], [-1.5, 0], [0, 1.5]])
-                
+
                 if ddr.name == 'ddr_0':
                     x1, y1 = random.uniform(-1, 2), random.uniform(0, 2)
                     for bar in barrier:
                         dist = np.linalg.norm(
-                            [x1 - bar[0], y1- bar[1]])
+                            [x1 - bar[0], y1 - bar[1]])
                         if dist < 0.2:
                             x1, y1 = random.uniform(-1, 2), random.uniform(0, 2)
                     # x1, y1 = random.uniform(-2, 2), random.uniform(0, 3) # before 2021/11/22 
@@ -156,7 +156,6 @@ class Gazebo_reset:
         except rospy.ServiceException as e:
             rospy.logerr("/gazebo/reset_modelState service call failed")
 
-
     def reset_agent_state_test(self, ddr_list):
         """
         test used
@@ -165,54 +164,54 @@ class Gazebo_reset:
         """
         rospy.wait_for_service('/gazebo/set_model_state')
         try:
-                vel = Twist()
-                vel.linear.x = 0
-                vel.linear.y = 0
-                vel.linear.z = 0
-                vel.angular.x = 0
-                vel.angular.y = 0
-                vel.angular.z = 0
-                my_model = SetModelStateRequest()
-                for ddr in ddr_list:
-                    ddr.car_vel.publish(vel)
-                    my_model.model_state.model_name = ddr.name
-                    if ddr.name == 'ddr_0':
-                        x1, y1 = 0,1
-                        my_model.model_state.pose.position.x = x1
-                        my_model.model_state.pose.position.y = y1
+            vel = Twist()
+            vel.linear.x = 0
+            vel.linear.y = 0
+            vel.linear.z = 0
+            vel.angular.x = 0
+            vel.angular.y = 0
+            vel.angular.z = 0
+            my_model = SetModelStateRequest()
+            for ddr in ddr_list:
+                ddr.car_vel.publish(vel)
+                my_model.model_state.model_name = ddr.name
+                if ddr.name == 'ddr_0':
+                    x1, y1 = 0, 1
+                    my_model.model_state.pose.position.x = x1
+                    my_model.model_state.pose.position.y = y1
 
-                    elif ddr.name == 'ddr_1':
-                        x1, y1 = 0,0.5
-                        my_model.model_state.pose.position.x = x1
-                        my_model.model_state.pose.position.y = y1
+                elif ddr.name == 'ddr_1':
+                    x1, y1 = 0, 0.5
+                    my_model.model_state.pose.position.x = x1
+                    my_model.model_state.pose.position.y = y1
 
-                    elif ddr.name == 'ddr_2':
-                        
-                        x1, y1 = 0,-1
-                        # x1, y1 = random.uniform(0, 1.5), random.uniform(-3, -2)
-                        my_model.model_state.model_name = 'ddr_2'
-                        my_model.model_state.pose.position.x = x1
-                        my_model.model_state.pose.position.y = y1
-                    else:
-                        assert 'car‘s name may be properly wrong.'
-                    import tf
-                    th = np.pi/2
-                    quart = tf.transformations.quaternion_from_euler(0, 0, th)
-                    # my_model.model_state.pose.position.z = 0.09
-                    my_model.model_state.pose.orientation.x = quart[0]
-                    my_model.model_state.pose.orientation.y = quart[1]
-                    my_model.model_state.pose.orientation.z = quart[2]
-                    my_model.model_state.pose.orientation.w = quart[3]
-                    my_model.model_state.twist.linear.x = 0.0
-                    my_model.model_state.twist.linear.y = 0.0
-                    my_model.model_state.twist.linear.z = 0.0
-                    my_model.model_state.twist.angular.x = 0.0
-                    my_model.model_state.twist.angular.y = 0.0
-                    my_model.model_state.twist.angular.z = 0.0
-                    my_model.model_state.reference_frame = "world"
-                    self.set_model_proxy(my_model)
-                    rospy.logdebug(
-                        "Set model pose1 @ ({},{},{})".format(x1, y1, th))
+                elif ddr.name == 'ddr_2':
+
+                    x1, y1 = 0, -1
+                    # x1, y1 = random.uniform(0, 1.5), random.uniform(-3, -2)
+                    my_model.model_state.model_name = 'ddr_2'
+                    my_model.model_state.pose.position.x = x1
+                    my_model.model_state.pose.position.y = y1
+                else:
+                    assert 'car‘s name may be properly wrong.'
+                import tf
+                th = np.pi / 2
+                quart = tf.transformations.quaternion_from_euler(0, 0, th)
+                # my_model.model_state.pose.position.z = 0.09
+                my_model.model_state.pose.orientation.x = quart[0]
+                my_model.model_state.pose.orientation.y = quart[1]
+                my_model.model_state.pose.orientation.z = quart[2]
+                my_model.model_state.pose.orientation.w = quart[3]
+                my_model.model_state.twist.linear.x = 0.0
+                my_model.model_state.twist.linear.y = 0.0
+                my_model.model_state.twist.linear.z = 0.0
+                my_model.model_state.twist.angular.x = 0.0
+                my_model.model_state.twist.angular.y = 0.0
+                my_model.model_state.twist.angular.z = 0.0
+                my_model.model_state.reference_frame = "world"
+                self.set_model_proxy(my_model)
+                rospy.logdebug(
+                    "Set model pose1 @ ({},{},{})".format(x1, y1, th))
         except rospy.ServiceException as e:
             rospy.logerr("/gazebo/reset_modelState service call failed")
 

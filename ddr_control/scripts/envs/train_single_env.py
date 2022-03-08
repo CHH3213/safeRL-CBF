@@ -5,8 +5,7 @@
 @File: train_safe_env:用于safe RL框架
         训练设置：固定一个智能体去追离他最近的智能体，其余两个智能体训练安全地到达目标点
         目标点随机，agent初始位置随机
-@Time: 2021/11/17 下午21:10
-@Author: chh3213
+@Time: 2022 0307
 ========Above the sun, full of fire!=====
 """
 from __future__ import absolute_import, division, print_function
@@ -338,6 +337,8 @@ class TAI_Env:
             vel.linear.x = self.v_linear
             if i == 2:
                 vel.linear.x = self.v_linear * 0.8
+            if i == 1:
+                vel.linear.x = 0
             vel.angular.z = action
             vel_list.append(vel)
         # print('********************')

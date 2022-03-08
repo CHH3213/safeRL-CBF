@@ -28,12 +28,12 @@ def main():
     parser.add_argument('--learning_rate', default=0.0001, type=float)
     parser.add_argument('--episodes', default=3500, type=int)
     parser.add_argument("--max_steps", type=int, default=500, help="maximum max_steps length")  # 每个episode的步数为400步
-    parser.add_argument('--saveData_dir', default="./save/td3_add_obs_{}/data".format(
+    parser.add_argument('--saveData_dir', default="./save/safe_layer_{}/data".format(
         time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())),
                         help="directory to store all experiment data")
     parser.add_argument('--testData_dir', default="./save/td3_add_obs_2021-11-30-18:26:30/data",
                         help="directory to store all experiment data")
-    parser.add_argument('--saveModel_dir', default='./save/td3_add_obs_{}/models'.format(
+    parser.add_argument('--saveModel_dir', default='./save/safe_layer_{}/models'.format(
         time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())),
                         help="where to store/load network weights")
     parser.add_argument('--load_dir', default='./save/td3_add_obs_2022-01-10-19:43:09/models',
@@ -43,9 +43,9 @@ def main():
                         help="how often to checkpoint")
     parser.add_argument('--testing', default=False, action="store_true",
                         help="reduces exploration substantially")
-    parser.add_argument("--restore", default=True, action="store_true")
+    parser.add_argument("--restore", default=False, action="store_true")
     parser.add_argument('--memory_size', default=100000, type=int)
-    parser.add_argument('--batch_size', default=1, type=int)
+    parser.add_argument('--batch_size', default=64, type=int)
     args = parser.parse_args()
 
     gpus = tf.config.experimental.list_physical_devices(device_type='GPU')
@@ -65,7 +65,7 @@ def main():
     AUTO_ENTROPY = True  # automatically updating variable alpha for entropy
     ##############################################################3
     if not args.testing:
-        from envs.train_safe_env import TAI_Env
+        from envs.train_single_env import TAI_Env
         env = TAI_Env()
     else:
         from envs.test_safe_env import TAI_Env
@@ -80,18 +80,15 @@ def main():
 
     HIDDEN_DIM = 128
     POLICY_TARGET_UPDATE_INTERVAL = 2  # delayed steps for updating the policy network and target networks
-    replay_Buffer = [ReplayBuffer_Agent01(args.memory_size), ReplayBuffer_Agent02(args.memory_size),
-                     ReplayBuffer_Agent03(args.memory_size)]
+    replay_Buffer = [ReplayBuffer_Agent01(args.memory_size), None, None]
 
     s_dim = env.observation_space[0].shape[0]
     a_dim = env.action_space[0].shape[0]
     a_bound = env.action_space[0].high
     agent_1 = TD3_Agent01(s_dim, a_dim, a_bound, HIDDEN_DIM, replay_Buffer[0], POLICY_TARGET_UPDATE_INTERVAL,
                           args.learning_rate, args.learning_rate)
-    agent_2 = TD3_Agent02(s_dim, a_dim, a_bound, HIDDEN_DIM, replay_Buffer[0], POLICY_TARGET_UPDATE_INTERVAL,
-                          args.learning_rate, args.learning_rate)
-    agent_3 = TD3_Agent03(s_dim, a_dim, a_bound, HIDDEN_DIM, replay_Buffer[0], POLICY_TARGET_UPDATE_INTERVAL,
-                          args.learning_rate, args.learning_rate)
+    agent_2 = None
+    agent_3 = None
     agents = [agent_1, agent_2, agent_3]
     reward_per_episode = 0
     safe_per_episode = 0
@@ -119,10 +116,11 @@ def main():
     state = np.array(state)
     state = state.astype(np.float32)
     for i, agent in enumerate(agents):
-        agent.policy_net([state[i]])
-        agent.target_policy_net([state[i]])
-        if args.restore:
-            agent.load(args.load_dir, env.ddr_name[i])
+        if agent != None:
+            agent.policy_net([state[i]])
+            agent.target_policy_net([state[i]])
+            if args.restore:
+                agent.load(args.load_dir, env.ddr_name[i])
     t_state = time.time()
     save_txt_dir = './save_txt/txt_{}'.format(
         time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()))
@@ -165,22 +163,24 @@ def main():
             steps = 0
             start = time.time()
             # reward_st = np.array([0])
-            actions = [[0], [0], [0]]
+            actions = np.array([[0], [0], [0]])
             for t in range(max_steps):
                 # rendering environmet (optional)
                 state = observation
                 # print(state)
                 for i, agent in enumerate(agents):
-                    action = agent.policy_net.get_action(actions, state[i], EXPLORE_NOISE_SCALE)
-                    # if frame_idx > EXPLORE_STEPS:
-                    #     action = agent.policy_net.get_action(state[i], EXPLORE_NOISE_SCALE)
-                    #     # print('train!!')
+                    if agent != None:
+                        action = agent.policy_net.get_action(actions, state[i], EXPLORE_NOISE_SCALE)
+                        # if frame_idx > EXPLORE_STEPS:
+                        #     action = agent.policy_net.get_action(state[i], EXPLORE_NOISE_SCALE)
+                        #     # print('train!!')
+                        # else:
+                        #     action = agent.policy_net.sample_action()
+                        # action = 0.2*i
+                        # action = action * 2
+                        actions[i] = action
                     # else:
-                    #     action = agent.policy_net.sample_action()
-                    # action = 0.2*i
-                    # action = action * 2
-                    # print(action)
-                    actions[i] = action
+                    #     actions[i] = [0.0]
 
                 """随机一个智能体变为追击离它最近的agent"""
                 "==================================="
@@ -218,27 +218,16 @@ def main():
                 # print(reward)
                 # add s_t,s_t+1,action,reward to experience memory
                 for i, agent in enumerate(agents):
-                    # print(i)
-                    replay_Buffer[i].push(state[i], actions[i], rewards[i], observation[i], done_n[i], safe[i])
-                    # print(state[i])
-                    # print('#######################0')
-                    # print(actions[i])
-                    # print('#############################1')
-                    # print(rewards[i])
-                    # print('#############################2')
-                    # print(observation[i])
-                    # print('#############################3')
-                    # print(done_n[i])
-                    # print('#############################4')
-                    # print(safe[i])
-                    # print('#############################5')
-                    if len(replay_Buffer[i]) > args.batch_size:
-                        # s = time.time()
-                        for j in range(UPDATE_ITR):
-                            # train critic and actor network
-                            if i != 2:
-                                agent.update(actions, args.batch_size, EVAL_NOISE_SCALE, REWARD_SCALE)
-                        # print(time.time()-s)
+                    if agent != None:
+                        # print(i)
+                        replay_Buffer[i].push(state[i], actions[i], rewards[i], observation[i], done_n[i], safe[i])
+                        if len(replay_Buffer[i]) > args.batch_size:
+                            # s = time.time()
+                            for j in range(UPDATE_ITR):
+                                # train critic and actor network
+                                if i != 2:
+                                    agent.update(actions, args.batch_size, EVAL_NOISE_SCALE, REWARD_SCALE)
+                            # print(time.time()-s)
 
                 reward_per_episode += np.sum(rewards)
                 reward_per_episode_ddr0 += np.sum(rewards[0])
@@ -248,7 +237,7 @@ def main():
                 frame_idx += 1
                 # check if episode ends:
                 # print(t)
-                print(done_n)
+                # print(done_n)
                 if env.wall_collide:
                     count_wall += 1
                 if env.agent_colliside:

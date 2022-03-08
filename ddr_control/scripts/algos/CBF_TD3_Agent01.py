@@ -283,17 +283,18 @@ class TD3:
 
         reward = reward[:, np.newaxis]  # expand dim
         done = done[:, np.newaxis]
-        safe = safe[:, np.newaxis]
-        # print(action)
+        # safe = safe[:, np.newaxis]
+        # print(np.shape(action))
         new_next_action = self.target_policy_net.evaluate(actions,
                                                           next_state, eval_noise_scale=eval_noise_scale
                                                           )  # clipped normal noise
+        # print(np.shape(new_next_action))
         reward = reward_scale * (reward - np.mean(reward, axis=0)) / (
                 np.std(reward, axis=0) + 1e-6
         )  # normalize with batch mean and std; plus a small number to prevent numerical problem
-        safe = safe_scale * (safe - np.mean(safe, axis=0)) / (
-                np.std(safe, axis=0) + 1e-6
-        )
+        # safe = safe_scale * (safe - np.mean(safe, axis=0)) / (
+        #         np.std(safe, axis=0) + 1e-6
+        # )
         # print(safe)
         # normalize with batch mean and std; plus a small number to prevent numerical problem
         # Training Q Function
@@ -323,7 +324,7 @@ class TD3:
         self.q_optimizer2.apply_gradients(
             zip(q2_grad, self.q_net2.trainable_weights))
 
-        safe = tf.convert_to_tensor(safe, dtype=tf.float32)
+        # safe = tf.convert_to_tensor(safe, dtype=tf.float32)
         # print(safe)
         # Training Policy Function
         if self.update_cnt % self.policy_target_update_interval == 0:

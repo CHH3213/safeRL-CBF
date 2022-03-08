@@ -10,10 +10,9 @@
 
 > 用于模型的状态设置，初始化目标点等。
 
-### 2.  rotate_calculation.py
+### 2. rotate_calculation.py
 
 > 姿态旋转相关函数
-
 
 ### 5. train_safe_env.py
 
@@ -23,10 +22,18 @@
 
 > 多个TD3联合训练，与`test_env_multi.py`配套
 
-
-### 8.  train_safe_env_backup_11-30.py
+### 8. train_safe_env_backup_11-30.py
 
 > 训练所用环境，状态量维13维，不包括最近的obstacle和wall的坐标，配套`test_safe_env_backup_11-30.py`
 
 ### 9. control_car.py
+
 > 小车控制代码
+
+### 10. train_single_env.py
+
+> 只用单个TD3算法，但是智能体还是多个。
+
+### 11. one_agent_env.py
+
+> 一个智能体只有障碍物的环境
