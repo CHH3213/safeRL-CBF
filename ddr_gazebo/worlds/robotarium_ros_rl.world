@@ -1,0 +1,226 @@
+<sdf version='1.7'>
+    <world name='default'>
+        <gui>
+            <camera name="user_camera">
+                <pose>0 -10 15 0 1.0 1.57</pose>
+            </camera>
+        </gui>
+        <light name='sun' type='directional'>
+            <cast_shadows>1</cast_shadows>
+            <pose frame=''>0 0 10 0 -0 0</pose>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.1 0.1 0.1 1</specular>
+            <attenuation>
+                <range>1000</range>
+                <constant>0.9</constant>
+                <linear>0.01</linear>
+                <quadratic>0.001</quadratic>
+            </attenuation>
+            <direction>-0.5 0.5 -1</direction>
+        </light>
+        <model name='ground_plane'>
+            <static>1</static>
+            <link name='link'>
+                <collision name='collision'>
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <surface>
+                        <friction>
+                            <ode>
+                                <mu>1</mu>
+                                <mu2>1</mu2>
+                            </ode>
+                            <torsional>
+                                <ode/>
+                            </torsional>
+                        </friction>
+                        <contact>
+                            <ode/>
+                        </contact>
+                        <bounce/>
+                    </surface>
+                    <max_contacts>10</max_contacts>
+                </collision>
+                <visual name='visual'>
+                    <cast_shadows>0</cast_shadows>
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <material>
+                        <script>
+                            <uri>file://media/materials/scripts/gazebo.material</uri>
+                            <name>Gazebo/Grey</name>
+                        </script>
+                    </material>
+                </visual>
+                <self_collide>0</self_collide>
+                <kinematic>0</kinematic>
+                <gravity>1</gravity>
+            </link>
+        </model>
+        <gravity>0 0 -9.8</gravity>
+        <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+        <atmosphere type='adiabatic'/>
+        <physics name='default_physics' default='0' type='bullet'>
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1</real_time_factor>
+            <real_time_update_rate>1000</real_time_update_rate>
+        </physics>
+        <scene>
+            <ambient>0.4 0.4 0.4 1</ambient>
+            <background>0.7 0.7 0.7 1</background>
+            <shadows>1</shadows>
+        </scene>
+        <spherical_coordinates>
+            <surface_model>EARTH_WGS84</surface_model>
+            <latitude_deg>0</latitude_deg>
+            <longitude_deg>0</longitude_deg>
+            <elevation>0</elevation>
+            <heading_deg>0</heading_deg>
+        </spherical_coordinates>
+
+        <!--    <model name="ddr_0">-->
+        <!--      <pose>0 -1.5 0 0 0 1.57</pose>-->
+        <!--      <include>-->
+        <!--        <uri>model://ddr_0</uri>&lt;!&ndash;核心&ndash;&gt;-->
+        <!--      </include>-->
+        <!--    </model>-->
+        <!--    <model name="ddr_1">-->
+        <!--      <pose>0 -2 0 0 0 1.57</pose>-->
+        <!--      <include>-->
+        <!--        <uri>model://ddr_1</uri>&lt;!&ndash;核心&ndash;&gt;-->
+        <!--      </include>-->
+        <!--    </model>-->
+        <!--    <model name="ddr_2">-->
+        <!--      <pose>0 -2.5 0 0 0 1.57</pose>-->
+        <!--      <include>-->
+        <!--        <uri>model://ddr_2</uri>&lt;!&ndash;核心&ndash;&gt;-->
+        <!--      </include>-->
+        <!--    </model>-->
+        <model name="start_mark">
+            <pose>0 0 0 0 0</pose>
+            <include>
+                <!--        <scale>0.1 0.1 0.1</scale>-->
+                <uri>model://mark_label</uri><!--核心-->
+                <static>true</static>
+            </include>
+        </model>
+        <model name="end_mark">
+            <pose>2 2 0 0 0</pose>
+            <include>
+                <!--        <scale>0.1 0.1 0.1</scale>-->
+                <uri>model://mark_label</uri><!--核心-->
+                <!--                <static>true</static>-->
+            </include>
+        </model>
+
+
+        <model name="barrier_0">
+            <pose>-1. 0 0 0 0 0</pose>
+            <include>
+                <name>barrier_0</name>
+                <uri>model://grey_barrier</uri>
+            </include>
+        </model>
+
+        <model name="barrier_1">
+            <pose>1. 0 0 0 0 0</pose>
+            <include>
+                <name>barrier_1</name>
+                <uri>model://grey_barrier</uri>
+            </include>
+        </model>
+
+        <model name="barrier_2">
+            <pose>0 1. 0 0 0 1.57</pose>
+            <include>
+                <name>barrier_2</name>
+                <uri>model://grey_barrier</uri>
+            </include>
+        </model>
+        <!-- <model name="wall_0">
+            <pose>0 5.1 0 0 0 0</pose>
+            <include>
+                <name>wall_0</name>
+                <uri>model://grey_wall_10</uri>
+            </include>
+        </model>
+
+        <model name="wall_1">
+            <pose>0 -5.1 0 0 0 0</pose>
+            <include>
+                <name>wall_1</name>
+                <uri>model://grey_wall_10</uri>
+            </include>
+        </model>
+
+        <model name="wall_2">
+            <pose>-5.1 0 0 0 0 1.57</pose>
+            <include>
+                <name>wall_2</name>
+                <uri>model://grey_wall_10</uri>
+            </include>
+        </model>
+
+        <model name="wall_3">
+            <pose>5.1 0 0 0 0 1.57</pose>
+            <include>
+                <name>wall_3</name>
+                <uri>model://grey_wall_10</uri>
+            </include>
+        </model> -->
+        <model name="ddr_0">
+            <pose>0 -1.5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_1">
+            <pose>0 -2 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_2">
+            <pose>0 -2.5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <!--        <model name="ddr_3">-->
+        <!--            <pose>0 -3 0 0 0 1.57</pose>-->
+        <!--            <include>-->
+        <!--                <uri>model://DDR_red</uri>-->
+        <!--            </include>-->
+        <!--        </model>-->
+        <!--        <model name="ddr_4">-->
+        <!--            <pose>0 -4 0 0 0 1.57</pose>-->
+        <!--            <include>-->
+        <!--                <uri>model://DDR_red</uri>-->
+        <!--            </include>-->
+        <!--        </model>-->
+
+
+        <!--    <model name="start_plane">-->
+        <!--      <pose>0 0 0 0 0 0</pose>-->
+        <!--      <include>-->
+        <!--        <name>end_plane</name>-->
+        <!--        <uri>model://start_plane</uri>&lt;!&ndash;核心&ndash;&gt;-->
+        <!--      </include>-->
+        <!--    </model>-->
+        <!--    <model name="end_plane">-->
+        <!--      <pose>3 3 0 0 0 0</pose>-->
+        <!--      <include>-->
+        <!--        <name>end_plane</name>-->
+        <!--        <uri>model://end_plane</uri>&lt;!&ndash;核心&ndash;&gt;-->
+        <!--      </include>-->
+        <!--    </model>-->
+    </world>
+</sdf>

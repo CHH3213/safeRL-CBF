@@ -57,10 +57,23 @@ walls = dict(wall_0=np.array([0, 3.1]), wall_1=np.array([0, -3.1]), wall_2=np.ar
              wall_3=np.array([3.1, 0]))
 print(walls['wall_1'])
 
-import torch
+# import torch
+#
+# print(torch.cuda.is_available())
+# a = torch.Tensor([1, 2])
+# a = a.cuda()
+# print(a)
+# print(torch.__version__)
 
-print(torch.cuda.is_available())
-a = torch.Tensor([1, 2])
-a = a.cuda()
-print(a)
-print(torch.__version__)
+l = np.array([1, 2, 3])
+l2 = 4
+l3 = np.hstack((l[0:2], l2))
+l4 = np.hstack((l[0:2], 5))
+l = np.vstack((l3, l4))
+# l3 = np.reshape(l3, (3, 1))
+print(l.T)
+p = np.empty(3)
+p = np.vstack((p, l3))
+p = np.vstack((p, l4))
+p = np.delete(p, 0, 0)
+print(p)

@@ -20,23 +20,25 @@
 - 运行
 
   ```bash
-  roslaunch ddr_control ddr_wall.launch
+  roslaunch ddr_control robotarium.launch
   ```
 
   打开环境，正常打开后应该会有如下界面：
 
-  <img src="./ddr_gazebo/worlds/simu_env.png" alt="world" style="zoom:150%;" />
+  <img src="./ddr_gazebo/worlds/2022-03-11_20-04.png" alt="world" style="zoom:150%;" />
 
-- 目录`ddr_control/scripts/envs`下有两个环境，其中`test_safe_env.py`文件计划用于训练完成后测试使用（往返到达目标点）；`train_safe_env.py`
-  文件用于训练使用，任务为不被碰撞的到达目标点，目标点随机给定，agent初始位置也随机给定。只有所有agent都到达目标点后才会done，否则任一agent到达目标点后只会重置该agent的初始状态，不影响其他agent。运行任意`env`
-  文件都可以进行简单测试：
-
-  ```bash
-  python test_env.py
-  # or
-  python train_env.py
-  ```
+- 目录`ddr_control/scripts/envs`下有两个环境，其中`ros_robotarium_env`环境用来测试clf-cbf-mpc，`rl_ros_robotarium_env`用来测试rl+CBF算法。
 
 ## algos
 
-- 运行`scripts/algos`下的`main_safe.py`开始训练或者测试，具体说明可参看对应文件夹下的`file_explain.py`
+### 1. clf_cbf_nmpc_test
+
+进入`clf_cbf_nmpc_test`文件夹，运行`test.py`文件，则直接测试clf-cbf-mpc算法。
+
+### 2. robotarium_ros_rl_cbf
+
+进入`robotarium_ros_rl_cbf`文件夹
+
+- 运行`ros_rl_main.py`文件，进行算法的训练，使用的是ros环境。
+- 运行`main.py`文件，进行算法的训练，使用的是robotarium环境。
+- 运行`test_robotarium.py`文件，进行CBF测试，使用的是robotarium环境。

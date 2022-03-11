@@ -25,13 +25,13 @@ from gazebo_msgs.msg import ModelState, ModelStates
 from gazebo_msgs.srv import *
 from gazebo_msgs.srv import SetModelStateRequest
 from geometry_msgs.msg import Pose, Twist
-from nav_msgs.msg import  Odometry
+from nav_msgs.msg import Odometry
 import numpy as np
-from envs.rotate_calculation import Rotate
+from rotate_calculation import Rotate
+
 
 class DDR:
     def __init__(self, name):
-
         # # parameters
         # self.log_dir = "../log"
         # if not os.path.exists(self.log_dir):
@@ -48,7 +48,8 @@ class DDR:
         # pubs
         self.car_vel = rospy.Publisher(name + '/' + 'cmd_vel', Twist, queue_size=100)
         # subs
-        self.car0_pose = rospy.Subscriber(name + '/' + "odom", Odometry, self.pose_cb, queue_size=100, buff_size=52428800)
+        self.car0_pose = rospy.Subscriber(name + '/' + "odom", Odometry, self.pose_cb, queue_size=100,
+                                          buff_size=52428800)
         self.rotate = Rotate()
 
     # callback funcs
@@ -59,5 +60,3 @@ class DDR:
 
 if __name__ == "__main__":
     pass
-
-
