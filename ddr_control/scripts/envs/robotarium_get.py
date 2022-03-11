@@ -89,14 +89,14 @@ class Robotarium:
                 my_model.model_state.model_name = ddr.name
 
                 if i == 0:
-                    x1, y1 = random.uniform(-1, 2), random.uniform(0, 2)
+                    x1, y1 = random.uniform(-0.5, 2), random.uniform(0, 2)
 
                     my_model.model_state.pose.position.x = x1
                     my_model.model_state.pose.position.y = y1
                     # my_model.model_state.pose.position.z = 0.09
 
                 if ddr.name == 'ddr_' + str(i) and i > 0:
-                    x1, y1 = random.uniform(-2, 2), random.uniform(-2, 2)
+                    x1, y1 = random.uniform(-0.5, 2), random.uniform(-0.5, 2)
 
                     # x1, y1 = random.uniform(-2, 2), random.uniform(0, 3) # before 2021/11/22
                     my_model.model_state.pose.position.x = x1

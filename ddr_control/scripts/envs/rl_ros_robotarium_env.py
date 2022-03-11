@@ -59,7 +59,7 @@ class RobotariumEnv(core.Env):
         # ros
         self.barrier_name = ['barrier_0', 'barrier_1', 'barrier_2']
         self.hazards_locations = np.array([[-1., 0.], [1., 0], [0, 1.]])
-        self.hazards_radius = 0.2  # 障碍物半径
+        self.hazards_radius = 0.3  # 障碍物半径
         self.robotarium_state.reset_barrier(self.hazards_locations)
         self.max_episode_steps = 400
 
@@ -112,14 +112,10 @@ class RobotariumEnv(core.Env):
         # 其他agent--任意给定
         for i in range(1, self.agent_number):
             vel = Twist()
-            vel.linear.x = 0.15
-            vel.angular.z = 0.1
+            vel.linear.x = 0.25
+            vel.angular.z = np.random.rand() * 0.5 - 0.25
             vel_list.append(vel)
 
-        u = np.empty([self.agent_number, 2])
-        u[0] = action
-        for i in range(1, self.agent_number):
-            u[i] = np.array([0.15, 0.1])
         for i, vel in enumerate(vel_list):
             # print(vel)
             self.ddr_list[i].car_vel.publish(vel)
@@ -148,20 +144,27 @@ class RobotariumEnv(core.Env):
 
         for idx in range(np.size(other_states, 0)):
             distSqr = (self_state[0] - other_states[idx][0]) ** 2 + (self_state[1] - other_states[idx][1]) ** 2
-            if distSqr < (0.2) ** 2:
+            if distSqr < (0.25) ** 2:
                 print('Get caught, mission failed !')
                 done = True
                 reward -= 100
 
+        for idx in range(len(self.hazards_locations)):
+            distSqr = (self_state[0] - self.hazards_locations[idx][0]) ** 2 + (
+                    self_state[1] - self.hazards_locations[idx][1]) ** 2
+            if distSqr < (0.25) ** 2:
+                print('hit barrier!')
+                done = True
+                reward -= 500
         # Check if goal is met
         if self.goal_met():
             print('Reach goal successfully!')
             info['goal_met'] = True
-            reward += 100
+            reward += 500
             done = True
         else:
-            # reward -=0.1*dist_goal
-            reward += 1.0 * (self.last_goal_dist - dist_goal)
+            reward -= 0.1 * dist_goal
+            # reward += 10.0 * (self.last_goal_dist - dist_goal)
 
         self.last_goal_dist = dist_goal
 
