@@ -5,6 +5,7 @@
         <arg name="world_name" value="$(find ddr_gazebo)/worlds/robotarium_ros_rl.world"/>
         <!-- more default parameters can be changed here -->
         <param name="/use_sim_time" value="false"/>
+        <arg name="gui" default="true"/>
     </include>
 
 </launch>

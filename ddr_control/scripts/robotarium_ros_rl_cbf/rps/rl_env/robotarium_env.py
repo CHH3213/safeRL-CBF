@@ -26,7 +26,8 @@ class RobotariumEnv(core.Env):
         self.agent_number = 3
         self.dt = 0.02
         # agent 初始位置
-        a = np.array([[3. * np.random.rand() - 1.5, 3. * np.random.rand() - 1.5, 0]]).T
+        # a = np.array([[3. * np.random.rand() - 1.5, 3. * np.random.rand() - 1.5, 0]]).T
+        a = np.array([[6. * np.random.rand() - 3, 6. * np.random.rand() - 3, 0]]).T
         self.initial_conditions = a
         for _ in range(1, self.agent_number):
             self.initial_conditions = np.concatenate((self.initial_conditions, np.array(
@@ -160,7 +161,9 @@ class RobotariumEnv(core.Env):
         plt.close()
 
         # a = np.array([[-1.5, -1.5 ,0]]).T
-        a = np.array([[3.9 * np.random.rand() - 2.0, 3.9 * np.random.rand() - 2.0, 0]]).T
+        a = np.array([[6. * np.random.rand() - 3, 6. * np.random.rand() - 3, 0]]).T
+
+        # a = np.array([[3.9 * np.random.rand() - 2.0, 3.9 * np.random.rand() - 2.0, 0]]).T
         self.initial_conditions = a
         for _ in range(1, self.agent_number):
             self.initial_conditions = np.concatenate((self.initial_conditions, np.array(

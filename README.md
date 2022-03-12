@@ -40,5 +40,20 @@
 进入`robotarium_ros_rl_cbf`文件夹
 
 - 运行`ros_rl_main.py`文件，进行算法的训练，使用的是ros环境。
+  ```shell
+  python ros_rl_main.py --cuda --eval False
+  ```
+  测试：
+  ```shell
+  python ros_rl_main.py --cuda --mode test --resume ./output/...  --visualize
+  ```
 - 运行`main.py`文件，进行算法的训练，使用的是robotarium环境。
+  ```shell
+    python main.py --cuda --eval False
+  
+  ```
+  测试：
+  ```shell
+  python main.py --cuda --mode test --resume ./output/...  --visualize
+  ```
 - 运行`test_robotarium.py`文件，进行CBF测试，使用的是robotarium环境。

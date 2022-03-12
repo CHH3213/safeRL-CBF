@@ -35,6 +35,7 @@ class Robotarium:
         self.set_model_state_proxy = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
         self.get_model_state_proxy = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         self.Rot = Rotate()
+        self.rate = rospy.Rate(10)
 
     def setModelState(self, model_state):
         rospy.wait_for_service('/gazebo/set_model_state')
@@ -60,6 +61,7 @@ class Robotarium:
         model_angular = [model_twist.angular.x, model_twist.angular.y, model_twist.angular.z]
         # print([model_position,model_orientation,model_linear,model_angular])
         # 位置，姿态，线速度，角速度
+        self.rate.sleep()
         return [model_position, model_attitude, model_pose0, model_linear, model_angular]
 
     def resetWorld(self):
@@ -89,14 +91,14 @@ class Robotarium:
                 my_model.model_state.model_name = ddr.name
 
                 if i == 0:
-                    x1, y1 = random.uniform(-0.5, 2), random.uniform(0, 2)
+                    x1, y1 = 3. * np.random.rand() - 1.5, 3. * np.random.rand() - 1.5
 
                     my_model.model_state.pose.position.x = x1
                     my_model.model_state.pose.position.y = y1
                     # my_model.model_state.pose.position.z = 0.09
 
                 if ddr.name == 'ddr_' + str(i) and i > 0:
-                    x1, y1 = random.uniform(-0.5, 2), random.uniform(-0.5, 2)
+                    x1, y1 = 2.6 * np.random.rand() - 1.0, 2.6 * np.random.rand() - 1.0
 
                     # x1, y1 = random.uniform(-2, 2), random.uniform(0, 3) # before 2021/11/22
                     my_model.model_state.pose.position.x = x1

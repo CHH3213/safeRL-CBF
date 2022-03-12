@@ -13,10 +13,11 @@ import os
 from rcbf_sac.utils import prGreen, get_output_folder, prYellow
 from rcbf_sac.evaluator import Evaluator
 from rcbf_sac.generate_rollouts import generate_model_rollouts
-from rps.rl_env.robotarium_env import  RobotariumEnv
+from rps.rl_env.robotarium_env import RobotariumEnv
 import matplotlib.pyplot as plt
-def train(agent, env, dynamics_model, args, experiment=None):
 
+
+def train(agent, env, dynamics_model, args, experiment=None):
     # Memory
     memory = ReplayMemory(args.replay_size, args.seed)
     memory_model = ReplayMemory(args.replay_size, args.seed)
@@ -45,7 +46,9 @@ def train(agent, env, dynamics_model, args, experiment=None):
 
         while not done:
             if episode_steps % 10 == 0:
-                prYellow('Episode {} - step {} - eps_rew {} - eps_cost {}'.format(i_episode, episode_steps, episode_reward, episode_cost))
+                prYellow(
+                    'Episode {} - step {} - eps_rew {} - eps_cost {}'.format(i_episode, episode_steps, episode_reward,
+                                                                             episode_cost))
             state = dynamics_model.get_state(obs)
 
             # Generate Model rollouts
@@ -64,7 +67,8 @@ def train(agent, env, dynamics_model, args, experiment=None):
                     # Update parameters of all the networks
                     if args.model_based:
                         # Pick the ratio of data to be sampled from the real vs model buffers
-                        real_ratio = max(min(args.real_ratio, len(memory) / args.batch_size), 1 - len(memory_model) / args.batch_size)
+                        real_ratio = max(min(args.real_ratio, len(memory) / args.batch_size),
+                                         1 - len(memory_model) / args.batch_size)
                         # Update parameters of all the networks
                         critic_1_loss, critic_2_loss, policy_loss, ent_loss, alpha = agent.update_parameters(memory,
                                                                                                              args.batch_size,
@@ -74,9 +78,9 @@ def train(agent, env, dynamics_model, args, experiment=None):
                                                                                                              real_ratio)
                     else:
                         critic_1_loss, critic_2_loss, policy_loss, ent_loss, alpha = agent.update_parameters(memory,
-                                                                                                           args.batch_size,
-                                                                                                           updates,
-                                                                                                           dynamics_model)
+                                                                                                             args.batch_size,
+                                                                                                             updates,
+                                                                                                             dynamics_model)
 
                     if experiment:
                         experiment.log_metric('loss/critic_1', critic_1_loss, updates)
@@ -87,9 +91,11 @@ def train(agent, env, dynamics_model, args, experiment=None):
                     updates += 1
 
             if args.use_comp:
-                action, action_comp, action_cbf = agent.select_action(obs, other_s,dynamics_model, warmup=args.start_steps > total_numsteps)
+                action, action_comp, action_cbf = agent.select_action(obs, other_s, dynamics_model,
+                                                                      warmup=args.start_steps > total_numsteps)
             else:
-                action = agent.select_action(obs,other_s, dynamics_model, warmup=args.start_steps > total_numsteps)  # Sample action from policy
+                action = agent.select_action(obs, other_s, dynamics_model,
+                                             warmup=args.start_steps > total_numsteps)  # Sample action from policy
 
             next_obs, other_s, reward, done, info = env.step(action)  # Step
             if 'cost_exception' in info:
@@ -103,9 +109,8 @@ def train(agent, env, dynamics_model, args, experiment=None):
             # (https://github.com/openai/spinningup/blob/master/spinup/algos/sac/sac.py)
             mask = 1 if episode_steps == env.max_episode_steps else float(not done)
 
-            memory.push(obs,other_s, action, reward, next_obs, mask, t=episode_steps * env.dt, next_t=(episode_steps+1) * env.dt)  # Append transition to memory
-
-
+            memory.push(obs, other_s, action, reward, next_obs, mask, t=episode_steps * env.dt,
+                        next_t=(episode_steps + 1) * env.dt)  # Append transition to memory
 
             # append comp rollout with step before updating
             if args.use_comp:
@@ -133,12 +138,14 @@ def train(agent, env, dynamics_model, args, experiment=None):
             # Comet.ml logging
             experiment.log_metric('reward/train', episode_reward, step=i_episode)
             experiment.log_metric('cost/train', episode_cost, step=i_episode)
-        prGreen("Episode: {}, total numsteps: {}, episode steps: {}, reward: {}, cost: {}".format(i_episode, total_numsteps,
-                                                                                      episode_steps,
-                                                                                             round(episode_reward, 2), round(episode_cost, 2)))
+        prGreen(
+            "Episode: {}, total numsteps: {}, episode steps: {}, reward: {}, cost: {}".format(i_episode, total_numsteps,
+                                                                                              episode_steps,
+                                                                                              round(episode_reward, 2),
+                                                                                              round(episode_cost, 2)))
 
         # Evaluation
-        if (i_episode+1) % 50 == 0 and args.eval is True:
+        if (i_episode + 1) % 50 == 0 and args.eval is True:
             print('Size of replay buffers: real : {}, \t\t model : {}'.format(len(memory), len(memory_model)))
             avg_reward = 0.
             avg_cost = 0.
@@ -150,9 +157,10 @@ def train(agent, env, dynamics_model, args, experiment=None):
                 done = False
                 while not done:
                     if args.use_comp:
-                        action, _, _ = agent.select_action(obs, other_s,dynamics_model, evaluate=True)
+                        action, _, _ = agent.select_action(obs, other_s, dynamics_model, evaluate=True)
                     else:
-                        action = agent.select_action(obs, other_s,dynamics_model, evaluate=True)  # Sample action from policy
+                        action = agent.select_action(obs, other_s, dynamics_model,
+                                                     evaluate=True)  # Sample action from policy
                     next_obs, other_s, reward, done, info = env.step(action)
                     episode_reward += reward
                     episode_cost += info.get('cost', 0)
@@ -168,20 +176,21 @@ def train(agent, env, dynamics_model, args, experiment=None):
                 experiment.log_metric('avg_cost/test', avg_cost, step=i_episode)
 
             print("----------------------------------------")
-            print("Test Episodes: {}, Avg. Reward: {}, Avg. Cost: {}".format(episodes, round(avg_reward, 2), round(avg_cost, 2)))
+            print("Test Episodes: {}, Avg. Reward: {}, Avg. Cost: {}".format(episodes, round(avg_reward, 2),
+                                                                             round(avg_cost, 2)))
             print("----------------------------------------")
 
 
 def test(agent, env, dynamics_model, evaluate, model_path, visualize=True, debug=False):
-
     agent.load_weights(model_path)
+
     # dynamics_model.load_disturbance_models(model_path)
 
-    def policy(observation,other_s):
+    def policy(observation, other_s):
         if args.use_comp:
-            action, action_comp, action_cbf = agent.select_action(observation,other_s, dynamics_model, evaluate=True)
+            action, action_comp, action_cbf = agent.select_action(observation, other_s, dynamics_model, evaluate=True)
         else:
-            action = agent.select_action(observation,other_s, dynamics_model,evaluate=True)
+            action = agent.select_action(observation, other_s, dynamics_model, evaluate=True)
         return action
 
     evaluate(env, policy, dynamics_model=dynamics_model, debug=debug, visualize=visualize, save=True)
@@ -198,7 +207,9 @@ if __name__ == "__main__":
     parser.add_argument('--comet_workspace', default='', help='Comet workspace')
     # SAC Args
     parser.add_argument('--mode', default='train', type=str, help='support option: train/test')
-    parser.add_argument('--visualize', action='store_true', dest='visualize', help='visualize env -only in available test mode')
+    parser.add_argument('--restore', type=bool, default=False, help='Should the compensator be used.')
+    parser.add_argument('--visualize', action='store_true', dest='visualize',
+                        help='visualize env -only in available test mode')
     parser.add_argument('--output', default='output', type=str, help='')
     parser.add_argument('--policy', default="Deterministic",
                         help='Policy Type: Gaussian | Deterministic (default: Gaussian)')
@@ -219,7 +230,7 @@ if __name__ == "__main__":
                         help='random seed (default: 12345)')
     parser.add_argument('--batch_size', type=int, default=256, metavar='N',
                         help='batch size (default: 256)')
-    parser.add_argument('--max_episodes', type=int, default=200, metavar='N',
+    parser.add_argument('--max_episodes', type=int, default=400, metavar='N',
                         help='maximum number of episodes (default: 400)')
     parser.add_argument('--hidden_size', type=int, default=256, metavar='N',
                         help='hidden size (default: 256)')
@@ -235,23 +246,30 @@ if __name__ == "__main__":
                         help='run on CUDA (default: False)')
     parser.add_argument('--device_num', type=int, default=0, help='Select GPU number for CUDA (default: 0)')
     parser.add_argument('--resume', default='default', type=str, help='Resuming model path for testing')
-    parser.add_argument('--validate_episodes', default=5, type=int, help='how many episode to perform during validate experiment')
-    parser.add_argument('--validate_steps', default=1000, type=int, help='how many steps to perform a validate experiment')
+    parser.add_argument('--validate_episodes', default=5, type=int,
+                        help='how many episode to perform during validate experiment')
+    parser.add_argument('--validate_steps', default=1000, type=int,
+                        help='how many steps to perform a validate experiment')
     # CBF, Dynamics, Env Args
-    parser.add_argument('--no_diff_qp', action='store_false', dest='diff_qp', help='Should the agent diff through the CBF?')
+    parser.add_argument('--no_diff_qp', action='store_false', dest='diff_qp',
+                        help='Should the agent diff through the CBF?')
 
     parser.add_argument('--k_d', default=3.0, type=float)
     parser.add_argument('--gamma_b', default=20, type=float)
     parser.add_argument('--l_p', default=0.03, type=float,
                         help="Look-ahead distance for unicycle dynamics output.")
     # Model Based Learning
-    parser.add_argument('--model_based', action='store_true', dest='model_based', help='If selected, will use data from the model to train the RL agent.')
-    parser.add_argument('--real_ratio', default=0.3, type=float, help='Portion of data obtained from real replay buffer for training.')
+    parser.add_argument('--model_based', action='store_true', dest='model_based',
+                        help='If selected, will use data from the model to train the RL agent.')
+    parser.add_argument('--real_ratio', default=0.3, type=float,
+                        help='Portion of data obtained from real replay buffer for training.')
     parser.add_argument('--k_horizon', default=1, type=int, help='horizon of model-based rollouts')
-    parser.add_argument('--rollout_batch_size', default=5, type=int, help='Size of initial states batch to rollout from.')
+    parser.add_argument('--rollout_batch_size', default=5, type=int,
+                        help='Size of initial states batch to rollout from.')
     # Compensator
     parser.add_argument('--comp_rate', default=0.005, type=float, help='Compensator learning rate')
-    parser.add_argument('--comp_train_episodes', default=200, type=int, help='Number of initial episodes to train compensator for.')
+    parser.add_argument('--comp_train_episodes', default=200, type=int,
+                        help='Number of initial episodes to train compensator for.')
     parser.add_argument('--comp_update_episode', default=50, type=int, help='Modulo for compensator updates')
     parser.add_argument('--use_comp', type=bool, default=False, help='Should the compensator be used.')
     args = parser.parse_args()
@@ -311,9 +329,10 @@ if __name__ == "__main__":
         args.start_steps /= (1 + args.rollout_batch_size)
 
     if args.mode == 'train':
+        if args.restore:
+            agent.load_weights(args.resume)
         train(agent, env, dynamics_model, args, experiment)
     elif args.mode == 'test':
         evaluate = Evaluator(args.validate_episodes, args.validate_steps, args.resume)
         test(agent, env, dynamics_model, evaluate, args.resume, visualize=args.visualize, debug=True)
     env.close()
-

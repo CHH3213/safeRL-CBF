@@ -46,9 +46,9 @@ class DDR:
         rospy.loginfo("waiting for ROS services")
 
         # pubs
-        self.car_vel = rospy.Publisher(name + '/' + 'cmd_vel', Twist, queue_size=100)
+        self.car_vel = rospy.Publisher(name + '/' + 'cmd_vel', Twist, queue_size=1)
         # subs
-        self.car0_pose = rospy.Subscriber(name + '/' + "odom", Odometry, self.pose_cb, queue_size=100,
+        self.car0_pose = rospy.Subscriber(name + '/' + "odom", Odometry, self.pose_cb, queue_size=1,
                                           buff_size=52428800)
         self.rotate = Rotate()
 

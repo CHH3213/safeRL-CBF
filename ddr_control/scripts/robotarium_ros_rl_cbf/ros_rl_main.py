@@ -8,12 +8,12 @@ import numpy as np
 from rcbf_sac.sac_cbf import RCBF_SAC
 from rcbf_sac.replay_memory import ReplayMemory
 from rcbf_sac.dynamics import DynamicsModel
-import os
 
 from rcbf_sac.utils import prGreen, get_output_folder, prYellow
 from rcbf_sac.evaluator import Evaluator
 from rcbf_sac.generate_rollouts import generate_model_rollouts
 import sys
+import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../envs'))
 from rl_ros_robotarium_env import RobotariumEnv
@@ -230,7 +230,7 @@ if __name__ == "__main__":
                         help='random seed (default: 12345)')
     parser.add_argument('--batch_size', type=int, default=256, metavar='N',
                         help='batch size (default: 256)')
-    parser.add_argument('--max_episodes', type=int, default=200, metavar='N',
+    parser.add_argument('--max_episodes', type=int, default=400, metavar='N',
                         help='maximum number of episodes (default: 400)')
     parser.add_argument('--hidden_size', type=int, default=256, metavar='N',
                         help='hidden size (default: 256)')

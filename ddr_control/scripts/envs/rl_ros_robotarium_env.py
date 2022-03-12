@@ -34,7 +34,7 @@ class RobotariumEnv(core.Env):
         # Define action and observation space
         # They must be gym.spaces objects
         # TODO：代码运行频率星需要根据实际情况调整
-        self.rate = rospy.Rate(20)
+        self.rate = rospy.Rate(50)
         self.agent_number = 3
         # Example when using discrete actions:
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
@@ -58,7 +58,7 @@ class RobotariumEnv(core.Env):
         # 障碍物位置
         # ros
         self.barrier_name = ['barrier_0', 'barrier_1', 'barrier_2']
-        self.hazards_locations = np.array([[-1., 0.], [1., 0], [0, 1.]])
+        self.hazards_locations = np.array([[0., 0.], [-1., 1.], [-1., -1.]])
         self.hazards_radius = 0.3  # 障碍物半径
         self.robotarium_state.reset_barrier(self.hazards_locations)
         self.max_episode_steps = 400
@@ -112,17 +112,18 @@ class RobotariumEnv(core.Env):
         # 其他agent--任意给定
         for i in range(1, self.agent_number):
             vel = Twist()
-            vel.linear.x = 0.25
-            vel.angular.z = np.random.rand() * 0.5 - 0.25
+            vel.linear.x = 0.15
+            # vel.angular.z = np.random.rand() * 0.5 - 0.25
+            vel.angular.z = 0.1
             vel_list.append(vel)
 
         for i, vel in enumerate(vel_list):
             # print(vel)
             self.ddr_list[i].car_vel.publish(vel)
-        # self.rate.sleep()
+        self.rate.sleep()
 
         reward, done, info = self._reward_done()
-        self.states = self.get_pose()
+        self.states = self.get_pose().T
         self.episode_step += 1
 
         return self.states, reward, done, info
@@ -144,7 +145,7 @@ class RobotariumEnv(core.Env):
 
         for idx in range(np.size(other_states, 0)):
             distSqr = (self_state[0] - other_states[idx][0]) ** 2 + (self_state[1] - other_states[idx][1]) ** 2
-            if distSqr < (0.25) ** 2:
+            if distSqr < 0.25 ** 2:
                 print('Get caught, mission failed !')
                 done = True
                 reward -= 100
@@ -152,7 +153,7 @@ class RobotariumEnv(core.Env):
         for idx in range(len(self.hazards_locations)):
             distSqr = (self_state[0] - self.hazards_locations[idx][0]) ** 2 + (
                     self_state[1] - self.hazards_locations[idx][1]) ** 2
-            if distSqr < (0.25) ** 2:
+            if distSqr < 0.25 ** 2:
                 print('hit barrier!')
                 done = True
                 reward -= 500
@@ -163,8 +164,8 @@ class RobotariumEnv(core.Env):
             reward += 500
             done = True
         else:
-            reward -= 0.1 * dist_goal
-            # reward += 10.0 * (self.last_goal_dist - dist_goal)
+            # reward -= 0.1 * dist_goal
+            reward += 10.0 * (self.last_goal_dist - dist_goal)
 
         self.last_goal_dist = dist_goal
 
@@ -203,7 +204,7 @@ class RobotariumEnv(core.Env):
         self.robotarium_state.reset_agent_state(ddr_list=self.ddr_list)
         self.robotarium_state.reset_target(self.goal_pos)
 
-        self.states = self.get_pose()
+        self.states = self.get_pose().T
 
         self.episode_step = 0
         other_agent_s = np.delete(self.states[1:], 2, 1)  # 除去欧拉角
@@ -273,4 +274,5 @@ class RobotariumEnv(core.Env):
             poses = np.vstack((poses, temp))
         poses = np.delete(poses, 0, 0)  # Nx3
         poses = poses.T  # 3xN
+        # print('pose', poses)
         return poses

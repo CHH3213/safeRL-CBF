@@ -113,7 +113,7 @@
             </include>
         </model>
         <model name="end_mark">
-            <pose>2 2 0 0 0</pose>
+            <pose>1.5 1.5 0 0 0</pose>
             <include>
                 <!--        <scale>0.1 0.1 0.1</scale>-->
                 <uri>model://mark_label</uri><!--核心-->
@@ -121,9 +121,9 @@
             </include>
         </model>
 
-
+        <!--        barrier边长为0.2-->
         <model name="barrier_0">
-            <pose>-1. 0 0 0 0 0</pose>
+            <pose>0. 0 0 0 0 0</pose>
             <include>
                 <name>barrier_0</name>
                 <uri>model://grey_barrier</uri>
@@ -131,7 +131,7 @@
         </model>
 
         <model name="barrier_1">
-            <pose>1. 0 0 0 0 0</pose>
+            <pose>-1. 1 0 0 0 0</pose>
             <include>
                 <name>barrier_1</name>
                 <uri>model://grey_barrier</uri>
@@ -139,7 +139,7 @@
         </model>
 
         <model name="barrier_2">
-            <pose>0 1. 0 0 0 1.57</pose>
+            <pose>-1 -1. 0 0 0 0</pose>
             <include>
                 <name>barrier_2</name>
                 <uri>model://grey_barrier</uri>
