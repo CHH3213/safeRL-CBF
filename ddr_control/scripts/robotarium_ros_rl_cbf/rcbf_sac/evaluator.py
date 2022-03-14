@@ -16,7 +16,10 @@ class Evaluator(object):
 
         self.is_training = False
         result = []
-
+        self.rewards = []
+        all_states = []
+        all_o_states = []
+        all_actions = []
         for episode in range(self.num_episodes):
 
             # reset at the start of episode
@@ -32,16 +35,19 @@ class Evaluator(object):
 
             episode_steps = 0
             episode_reward = 0.
-
+            episode_state = []
+            episode_o_state = []
+            episode_action = []
             assert observation is not None
 
             # start episode
             done = False
             while not done:
                 # basic operation, action ,reward, blablabla ...
-                action = policy(observation,other_s)
+                action = policy(observation, other_s)
 
                 observation, other_s, reward, done, info = env.step(action)
+                state = dynamics_model.get_state(observation)
 
                 # if visualize:
                 #     env.render()
@@ -49,15 +55,23 @@ class Evaluator(object):
                 # update
                 episode_reward += reward
                 episode_steps += 1
+                episode_state.append(state)
+                episode_o_state.append(other_s)
+                episode_action.append(action)
 
             if debug: prYellow('[Evaluate] #Episode{}: episode_reward:{}'.format(episode, episode_reward))
             result.append(episode_reward)
-
+            all_actions.append(episode_action)
+            all_states.append(episode_state)
+            all_o_states.append(episode_o_state)
         result = np.array(result).reshape(-1, 1)
         self.results = np.hstack([self.results, result])
-
+        self.rewards.append(episode_reward)
         if save:
             self.save_results('{}/validate_reward'.format(self.save_path))
+            savemat('{}/validate_'.format(self.save_path) + 'data.mat', {'actions': all_actions,
+                                                                         'states': all_states,
+                                                                         'o_states': all_o_states})
         return np.mean(result)
 
     def save_results(self, fn):
@@ -72,4 +86,5 @@ class Evaluator(object):
         ax.errorbar(x, y, yerr=error, fmt='-o')
         plt.savefig(fn + '.png')
         savemat(fn + '.mat', {'reward': self.results})
+        savemat(fn + '_01.mat', {'reward': self.rewards})
         plt.close()

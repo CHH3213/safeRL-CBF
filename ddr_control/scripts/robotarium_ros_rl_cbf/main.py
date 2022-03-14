@@ -15,6 +15,7 @@ from rcbf_sac.evaluator import Evaluator
 from rcbf_sac.generate_rollouts import generate_model_rollouts
 from rps.rl_env.robotarium_env import RobotariumEnv
 import matplotlib.pyplot as plt
+import scipy.io as sio
 
 
 def train(agent, env, dynamics_model, args, experiment=None):
@@ -29,9 +30,16 @@ def train(agent, env, dynamics_model, args, experiment=None):
     if args.use_comp:
         compensator_rollouts = []
         comp_buffer_idx = 0
-
+    all_rewards = []
+    all_actions = []
+    all_states = []
+    all_o_states = []
     for i_episode in range(args.max_episodes):
         episode_reward = 0
+        steps_reward = []
+        steps_action = []
+        steps_state = []
+        steps_o_state = []
         episode_cost = 0
         episode_steps = 0
         done = False
@@ -103,6 +111,10 @@ def train(agent, env, dynamics_model, args, experiment=None):
             episode_steps += 1
             total_numsteps += 1
             episode_reward += reward
+            steps_reward.append(reward)
+            steps_action.append(action)
+            steps_state.append(state)
+            steps_o_state.append(other_s)
             episode_cost += info.get('cost', 0)
 
             # Ignore the "done" signal if it comes from hitting the time horizon.
@@ -120,6 +132,10 @@ def train(agent, env, dynamics_model, args, experiment=None):
 
             obs = next_obs
 
+        all_rewards.append(steps_reward)
+        all_actions.append(steps_action)
+        all_states.append(steps_state)
+        all_o_states.append(steps_o_state)
         # Train compensator
         if args.use_comp and i_episode < args.comp_train_episodes:
             if comp_buffer_idx < 50:  # TODO: Turn the 50 into an arg
@@ -180,6 +196,12 @@ def train(agent, env, dynamics_model, args, experiment=None):
                                                                              round(avg_cost, 2)))
             print("----------------------------------------")
 
+    # 保存数据
+    sio.savemat(args.output + '/reward.mat', {'rewards': all_rewards,
+                                              'actions': all_actions,
+                                              'states': all_states,
+                                              'o_states': all_o_states})
+
 
 def test(agent, env, dynamics_model, evaluate, model_path, visualize=True, debug=False):
     agent.load_weights(model_path)
@@ -203,8 +225,8 @@ if __name__ == "__main__":
     parser.add_argument('--env-name', default="Robotarium", help='Options: Robotarium.')
     # Comet ML
     parser.add_argument('--log_comet', action='store_true', dest='log_comet', help="Whether to log data")
-    parser.add_argument('--comet_key', default='', help='Comet API key')
-    parser.add_argument('--comet_workspace', default='', help='Comet workspace')
+    parser.add_argument('--comet_key', default='Kp7gLz2KdgLb9KBjDqrgVvrhz', help='Comet API key')
+    parser.add_argument('--comet_workspace', default='chh3213', help='Comet workspace')
     # SAC Args
     parser.add_argument('--mode', default='train', type=str, help='support option: train/test')
     parser.add_argument('--restore', type=bool, default=False, help='Should the compensator be used.')
@@ -226,8 +248,8 @@ if __name__ == "__main__":
                                 term against the reward (default: 0.2)')
     parser.add_argument('--automatic_entropy_tuning', type=bool, default=True, metavar='G',
                         help='Automatically adjust α (default: False)')
-    parser.add_argument('--seed', type=int, default=12345, metavar='N',
-                        help='random seed (default: 12345)')
+    parser.add_argument('--seed', type=int, default=12, metavar='N',
+                        help='random seed (default: 12345)')  # run26:seed:12,gamma_b:500,agent:30
     parser.add_argument('--batch_size', type=int, default=256, metavar='N',
                         help='batch size (default: 256)')
     parser.add_argument('--max_episodes', type=int, default=400, metavar='N',
@@ -254,9 +276,9 @@ if __name__ == "__main__":
     parser.add_argument('--no_diff_qp', action='store_false', dest='diff_qp',
                         help='Should the agent diff through the CBF?')
 
-    parser.add_argument('--k_d', default=3.0, type=float)
-    parser.add_argument('--gamma_b', default=20, type=float)
-    parser.add_argument('--l_p', default=0.03, type=float,
+    parser.add_argument('--k_d', default=1.5, type=float)
+    parser.add_argument('--gamma_b', default=500, type=float)
+    parser.add_argument('--l_p', default=0.05, type=float,
                         help="Look-ahead distance for unicycle dynamics output.")
     # Model Based Learning
     parser.add_argument('--model_based', action='store_true', dest='model_based',
@@ -285,7 +307,7 @@ if __name__ == "__main__":
         torch.cuda.set_device(args.device_num)
 
     if args.mode == 'train' and args.log_comet:
-        project_name = 'sac-rcbf-unicycle-environment' if args.env_name == 'Unicycle' else 'sac-rcbf-sim-cars-env'
+        project_name = 'sac-rcbf-Robotarium-environment'
         prYellow('Logging experiment on comet.ml!')
         # Create an experiment with your api key
         experiment = Experiment(

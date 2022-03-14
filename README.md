@@ -49,7 +49,7 @@
   ```
 - 运行`main.py`文件，进行算法的训练，使用的是robotarium环境。
   ```shell
-    python main.py --cuda --eval False
+    python main.py --cuda --eval False --max_episodes 600 --log_comet   
   
   ```
   测试：

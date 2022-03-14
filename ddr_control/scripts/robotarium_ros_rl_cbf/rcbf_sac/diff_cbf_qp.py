@@ -18,8 +18,6 @@ class CBFQPLayer:
             Gym environment.
         gamma_b : float, optional
             gamma of control barrier certificate.
-        k_d : float, optional
-            confidence parameter desired (2.0 corresponds to ~95% for example).
         """
 
         self.device = torch.device("cuda" if args.cuda else "cpu")
@@ -73,7 +71,8 @@ class CBFQPLayer:
         # The actual safe action is the cbf action + the nominal action
         final_action = torch.clamp(action_batch + safe_action_batch, self.u_min.repeat(action_batch.shape[0], 1),
                                    self.u_max.repeat(action_batch.shape[0], 1))
-
+        # print('a', action_batch)
+        # print('s', safe_action_batch)
         return final_action if not expand_dims else final_action.squeeze(0)
 
     def solve_qp(self, Ps: torch.Tensor, qs: torch.Tensor, Gs: torch.Tensor, hs: torch.Tensor):
@@ -102,7 +101,7 @@ class CBFQPLayer:
         Gs /= Ghs_norm
         hs = hs / Ghs_norm.squeeze(-1)
         sol = self.cbf_layer(Ps, qs, Gs, hs,
-                             solver_args={"check_Q_spd": False, "maxIter": 100000, "notImprovedLim": 10, "eps": 1e-4})
+                             solver_args={"check_Q_spd": False, "maxIter": 10000, "notImprovedLim": 10, "eps": 1e-4})
         safe_action_batch = sol[:, :-1]
         return safe_action_batch
 
@@ -203,7 +202,7 @@ class CBFQPLayer:
         num_cbfs = self.num_cbfs
         hazards_radius = self.env.hazards_radius
         # hazards_locations = to_tensor(self.env.hazards_locations, torch.FloatTensor, self.device)
-        collision_radius = 1.3 * hazards_radius  # add a little buffer
+        collision_radius = 1.1 * hazards_radius  # add a little buffer
         l_p = self.l_p
 
         thetas = state_batch[:, 2, :].squeeze(-1)  # shape:([256])
@@ -264,12 +263,12 @@ class CBFQPLayer:
         G[:, :num_cbfs, :dim_u] = -torch.bmm(dhdps, g_ps)  # h1^Tg(x)
         G[:, :num_cbfs, dim_u] = -1  # for slack
         # h[:, :num_cbfs] = gamma_b * (hs ** 3) + (torch.bmm(dhdps, f_ps + mu_ps) - torch.bmm(torch.abs(dhdps), sigma_ps) + torch.bmm(torch.bmm(dhdps, g_ps), action_batch)).squeeze(-1)
-        h[:, :num_cbfs] = gamma_b * (hs ** 3) + (
+        h[:, :num_cbfs] = gamma_b * (torch.tanh(hs) ** 3) + (
                 torch.bmm(dhdps, f_ps) + torch.bmm(torch.bmm(dhdps, g_ps), action_batch)).squeeze(-1)
         ineq_constraint_counter += num_cbfs
 
         # Let's also build the cost matrices, vectors to minimize control effort and penalize slack
-        P = torch.diag(torch.tensor([1.e0, 1.e-2, 1e5])).repeat(batch_size, 1, 1).to(self.device)
+        P = torch.diag(torch.tensor([1.e0, 1.e-4, 1e5])).repeat(batch_size, 1, 1).to(self.device)
         q = torch.zeros((batch_size, dim_u + 1)).to(self.device)
 
         # Second let's add actuator constraints
@@ -306,93 +305,3 @@ class CBFQPLayer:
         u_max = torch.tensor(self.env.safe_action_space.high).to(self.device)
 
         return u_min, u_max
-
-
-if __name__ == "__main__":
-
-    from build_env import build_env
-    from rcbf_sac.dynamics import DynamicsModel
-    from copy import deepcopy
-    from rcbf_sac.utils import to_numpy, prGreen
-
-
-    def simple_controller(env, state, goal):
-        goal_xy = goal[:2]
-        goal_dist = -np.log(goal[2])  # the observation is np.exp(-goal_dist)
-        v = 0.02 * goal_dist
-        relative_theta = 1.0 * np.arctan2(goal_xy[1], goal_xy[0])
-        omega = 1.0 * relative_theta
-
-        return np.clip(np.array([v, omega]), env.action_space.low, env.action_space.high)
-
-
-    parser = argparse.ArgumentParser(description='PyTorch Soft Actor-Critic Args')
-    # Environment Args
-    parser.add_argument('--env-name', default="SafetyGym", help='Options are Unicycle or SafetyGym')
-    parser.add_argument('--robot_xml', default='xmls/point.xml',
-                        help="SafetyGym Currently only supporting xmls/point.xml")
-    parser.add_argument('--k_d', default=3.0, type=float)
-    parser.add_argument('--gamma_b', default=100, type=float)
-    parser.add_argument('--l_p', default=0.03, type=float)
-    parser.add_argument('--gp_model_size', default=2000, type=int, help='gp')
-    parser.add_argument('--cuda', action='store_true', help='run on CUDA (default: False)')
-    args = parser.parse_args()
-    # Environment
-    env = build_env(args)
-
-    device = torch.device('cuda' if args.cuda else 'cpu')
-
-
-    def to_def_tensor(ndarray):
-
-        return to_tensor(ndarray, torch.FloatTensor, device)
-
-
-    diff_cbf_layer = CBFQPLayer(env, args, args.gamma_b, args.k_d, args.l_p)
-    dynamics_model = DynamicsModel(env, args)
-
-    obs = env.reset()
-    done = False
-
-    ep_ret = 0
-    ep_cost = 0
-    ep_step = 0
-
-    for i_step in range(3000):
-
-        if done:
-            prGreen('Episode Return: %.3f \t Episode Cost: %.3f' % (ep_ret, ep_cost))
-            ep_ret, ep_cost, ep_step = 0, 0, 0
-            obs = env.reset()
-
-        state = dynamics_model.get_state(obs)
-
-        print('state = {}, dist2hazards = {}'.format(state[:2],
-                                                     np.sqrt(np.sum((env.hazards_locations - state[:2]) ** 2, 1))))
-
-        disturb_mean, disturb_std = dynamics_model.predict_disturbance(state)
-
-        action = simple_controller(env, state, obs[-3:])  # TODO: observations last 3 indicated
-        # action = 2*np.random.rand(2) - 1.0
-        assert env.action_space.contains(action)
-        final_action = diff_cbf_layer.get_safe_action(to_def_tensor(state), to_def_tensor(action),
-                                                      to_def_tensor(disturb_mean), to_def_tensor(disturb_std))
-        final_action = to_numpy(final_action)
-
-        # Env Step
-        observation2, reward, done, info = env.step(final_action)
-        observation2 = deepcopy(observation2)
-
-        # Update state and store transition for GP model learning
-        next_state = dynamics_model.get_state(observation2)
-        if ep_step % 2 == 0:
-            dynamics_model.append_transition(state, final_action, next_state)
-
-        # print('reward', reward)
-        ep_ret += reward
-        ep_cost += info.get('cost', 0)
-        ep_step += 1
-        # env.render()
-
-        obs = observation2
-        state = next_state

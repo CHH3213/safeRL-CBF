@@ -67,4 +67,6 @@ while (True):
     u_safe = u_norm + u_safe
     obs, other_s, reward, done, info = env.step(u_safe)
     if done:
-        break
+        env.reset()
+
+        # break

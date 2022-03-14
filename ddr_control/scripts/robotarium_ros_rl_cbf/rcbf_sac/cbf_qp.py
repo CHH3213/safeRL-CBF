@@ -1,6 +1,7 @@
 import numpy as np
 from quadprog import solve_qp
 
+
 class CascadeCBFLayer:
 
     def __init__(self, env, gamma_b=100, k_d=1.5, l_p=0.03):
@@ -22,7 +23,7 @@ class CascadeCBFLayer:
         self.k_d = k_d
         self.l_p = l_p
 
-    def get_u_safe(self, u_nom, s,other_s, mean_pred=None, sigma=None):
+    def get_u_safe(self, u_nom, s, other_s, mean_pred=None, sigma=None):
         """Given the current state of the system, this function computes the control input necessary to render the nominal
         control `u_nom` safe (i.e. u_safe + u_nom is safe).
 
@@ -41,9 +42,10 @@ class CascadeCBFLayer:
         -------
         u_safe : ndarray
             Safe control input to be added to `u_nom` as such `env.step(u_nom + u_safe)`
+            :param other_s:
         """
 
-        P, q, G, h = self.get_cbf_qp_constraints(u_nom, s,other_s, mean_pred, sigma)
+        P, q, G, h = self.get_cbf_qp_constraints(u_nom, s, other_s, mean_pred, sigma)
         u_safe = self.solve_qp(P, q, G, h)
 
         return u_safe
@@ -84,7 +86,7 @@ class CascadeCBFLayer:
             Inequality constraint vector (G[u,eps] <= h) of size (num_constraints,)
         """
         # print(other_state)
-        collision_radius = self.env.hazards_radius  
+        collision_radius = self.env.hazards_radius
 
         # p(x): lookahead output
         p_x = np.array([state[0] + self.l_p * np.cos(state[2]), state[1] + self.l_p * np.sin(state[2])])
@@ -95,14 +97,14 @@ class CascadeCBFLayer:
         c_theta = np.cos(theta)
         s_theta = np.sin(theta)
         R = np.array([[c_theta, -s_theta],
-                        [s_theta, c_theta]])
+                      [s_theta, c_theta]])
         L = np.array([[1, 0],
-                        [0, self.l_p]])
+                      [0, self.l_p]])
         g_p = R @ L
 
         # hs
         hs = 0.5 * (np.sum((p_x - other_state) ** 2,
-                                    axis=1) - collision_radius ** 2)  # 1/2 * (||x - x_obs||^2 - r^2)
+                           axis=1) - collision_radius ** 2)  # 1/2 * (||x - x_obs||^2 - r^2)
         dhdxs = (p_x - other_state)  # each row is dhdx_i for hazard i
 
         # since we're dealing with p(x), we need to get the disturbance on p_x, p_y
@@ -112,7 +114,8 @@ class CascadeCBFLayer:
         # sigma_p = sigma_pred[:2] + self.l_p * np.array([-np.sin(state[2]), np.cos(state[2])]) * sigma_pred[2]
 
         dim_u = u_nom.shape[0]  # dimension of control inputs
-        num_constraints = hs.shape[0] + 2 * dim_u  # each cbf is a constraint, and we need to add actuator constraints (dim_u of them)
+        num_constraints = hs.shape[
+                              0] + 2 * dim_u  # each cbf is a constraint, and we need to add actuator constraints (dim_u of them)
 
         # Inequality constraints (G[u, eps] <= h)
         G = np.zeros((num_constraints, dim_u + 1))  # the plus 1 is for epsilon (to make sure qp is always feasible)
@@ -128,18 +131,18 @@ class CascadeCBFLayer:
             # Add inequality constraints
             G[ineq_constraint_counter, :dim_u] = -dhdx_ @ g_p  # h1^Tg(x)
             G[ineq_constraint_counter, dim_u] = -1  # for slack
-            
+
             # h[ineq_constraint_counter] = self.gamma_b * (h_ ** 3) + np.dot(dhdx_, (f_p+mean_p)) + np.dot(dhdx_ @ g_p,
             #                                                                                         u_nom) \
             #                                 - self.k_d * np.dot(np.abs(dhdx_), sigma_p)
-            h[ineq_constraint_counter] = self.gamma_b * (h_ ** 3)  + np.dot(dhdx_ @ g_p,u_nom)
+            h[ineq_constraint_counter] = self.gamma_b * (h_ ** 3) + np.dot(dhdx_ @ g_p, u_nom)
 
             ineq_constraint_counter += 1
 
         # Let's also build the cost matrices, vectors to minimize control effort and penalize slack
-        P = np.diag([1.e1, 1.e-4, 1e5])  # in the original code, they use 1e24 instead of 1e7, but quadprog can't handle that...
+        P = np.diag(
+            [1.e1, 1.e-4, 1e5])  # in the original code, they use 1e24 instead of 1e7, but quadprog can't handle that...
         q = np.zeros(dim_u + 1)
-
 
         # Second let's add actuator constraints
         dim_u = u_nom.shape[0]  # dimension of control inputs
@@ -151,7 +154,7 @@ class CascadeCBFLayer:
                 h[ineq_constraint_counter] = self.u_max[c] - u_nom[c]
                 ineq_constraint_counter += 1
 
-            # u_min <= u_nom + u ---> -u <= u_min - u_nom
+            # u_min <= u_nom + u ---> -u <= u_nom-u_min
             if self.u_min is not None:
                 G[ineq_constraint_counter, c] = -1
                 h[ineq_constraint_counter] = -self.u_min[c] + u_nom[c]
@@ -229,11 +232,12 @@ class CascadeCBFLayer:
         def get_h(state):
             # p(x): lookahead output
             state = np.array([state[0] + self.l_p * np.cos(state[2]), state[1] + self.l_p * np.sin(state[2])])
-            return 0.5 * (np.sum((state - hazards_locations)**2, axis=1) - collision_radius**2)  # 1/2 * (||x - x_obs||^2 - r^2)
+            return 0.5 * (np.sum((state - hazards_locations) ** 2,
+                                 axis=1) - collision_radius ** 2)  # 1/2 * (||x - x_obs||^2 - r^2)
 
         def get_dhdx(state):
             # p(x): lookahead output
-            
+
             state = np.array([state[0] + self.l_p * np.cos(state[2]), state[1] + self.l_p * np.sin(state[2])])
             dhdx = (state - hazards_locations)  # each row is dhdx_i for hazard i
             return dhdx
@@ -256,7 +260,7 @@ class CascadeCBFLayer:
 
         return u_min, u_max
 
-    def get_min_h_val(self, state,other_state):
+    def get_min_h_val(self, state, other_state):
         """
 
         Parameters
@@ -274,4 +278,3 @@ class CascadeCBFLayer:
         get_h, _ = self.get_cbfs(other_state, self.env.hazards_radius)
         min_h_val = np.min(get_h(state))
         return min_h_val
-

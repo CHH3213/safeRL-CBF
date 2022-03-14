@@ -23,7 +23,7 @@ class RobotariumEnv(core.Env):
         # Initialize Env
         self.episode_step = 0
         self.goal_pos = np.array([1.5, 1.5])
-        self.agent_number = 3
+        self.agent_number = 30
         self.dt = 0.02
         # agent 初始位置
         # a = np.array([[3. * np.random.rand() - 1.5, 3. * np.random.rand() - 1.5, 0]]).T
@@ -100,30 +100,31 @@ class RobotariumEnv(core.Env):
         dist_goal = self._goal_dist()
 
         self_state = self.states[0]
-        other_states = self.states[1:]
-
+        # other_states = self.states[1:]
+        other_agent_s = np.delete(self.states[1:], 2, 1)  # 除去欧拉角
+        other_s = np.vstack((other_agent_s, self.hazards_locations))
         # # Check boundaries
         # if(self_state[1]>1.9 or self_state[1]<-1.9 or self_state[0]>1.9 or self_state[0]<-1.9):
         #     print('Out of boundaries !!')
         #     reward -= 100
         #     done =True
 
-        for idx in range(np.size(other_states, 0)):
-            distSqr = (self_state[0] - other_states[idx][0]) ** 2 + (self_state[1] - other_states[idx][1]) ** 2
+        for idx in range(np.size(other_s, 0)):
+            distSqr = (self_state[0] - other_s[idx][0]) ** 2 + (self_state[1] - other_s[idx][1]) ** 2
             if distSqr < (0.2) ** 2:
                 print('Get caught, mission failed !')
                 done = True
-                reward -= 100
+                reward -= 500
 
         # Check if goal is met
         if self.goal_met():
             print('Reach goal successfully!')
             info['goal_met'] = True
-            reward += 100
+            reward += 500
             done = True
         else:
-            # reward -=0.1*dist_goal
-            reward += 10 * (self.last_goal_dist - dist_goal)
+            reward -= 0.1 * dist_goal
+            # reward += 10 * (self.last_goal_dist - dist_goal)
 
         self.last_goal_dist = dist_goal
 
@@ -135,7 +136,7 @@ class RobotariumEnv(core.Env):
                 info['cost'] += 0.1
             else:
                 info['cost'] = 0.1
-
+        # print(reward)
         return reward, done, info
 
     def goal_met(self):
@@ -173,11 +174,11 @@ class RobotariumEnv(core.Env):
                                  initial_conditions=self.initial_conditions, sim_in_real_time=False)
         if (is_show_figure):
             self.agents.axes.add_patch(
-                patches.Circle(self.hazards_locations[0], self.hazards_radius, fill=True))  # Obstacle 1
+                patches.Circle(self.hazards_locations[0], self.hazards_radius - 0.05, fill=True))  # Obstacle 1
             self.agents.axes.add_patch(
-                patches.Circle(self.hazards_locations[1], self.hazards_radius, fill=True))  # Obstacle 2
+                patches.Circle(self.hazards_locations[1], self.hazards_radius - 0.05, fill=True))  # Obstacle 2
             self.agents.axes.add_patch(
-                patches.Circle(self.hazards_locations[2], self.hazards_radius, fill=True))  # Obstacle
+                patches.Circle(self.hazards_locations[2], self.hazards_radius - 0.05, fill=True))  # Obstacle
             self.agents.axes.add_patch(patches.Circle(self.goal_pos, self.goal_size, fill=False, zorder=10))  # target
 
         self.states = self.agents.get_poses().T

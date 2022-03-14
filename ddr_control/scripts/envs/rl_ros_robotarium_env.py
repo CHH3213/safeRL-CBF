@@ -35,7 +35,7 @@ class RobotariumEnv(core.Env):
         # They must be gym.spaces objects
         # TODO：代码运行频率星需要根据实际情况调整
         self.rate = rospy.Rate(50)
-        self.agent_number = 3
+        self.agent_number = 11
         # Example when using discrete actions:
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
         self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(2,))
@@ -148,7 +148,7 @@ class RobotariumEnv(core.Env):
             if distSqr < 0.25 ** 2:
                 print('Get caught, mission failed !')
                 done = True
-                reward -= 100
+                reward -= 500
 
         for idx in range(len(self.hazards_locations)):
             distSqr = (self_state[0] - self.hazards_locations[idx][0]) ** 2 + (

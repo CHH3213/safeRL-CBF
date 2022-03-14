@@ -86,24 +86,7 @@
             <heading_deg>0</heading_deg>
         </spherical_coordinates>
 
-        <!--    <model name="ddr_0">-->
-        <!--      <pose>0 -1.5 0 0 0 1.57</pose>-->
-        <!--      <include>-->
-        <!--        <uri>model://ddr_0</uri>&lt;!&ndash;核心&ndash;&gt;-->
-        <!--      </include>-->
-        <!--    </model>-->
-        <!--    <model name="ddr_1">-->
-        <!--      <pose>0 -2 0 0 0 1.57</pose>-->
-        <!--      <include>-->
-        <!--        <uri>model://ddr_1</uri>&lt;!&ndash;核心&ndash;&gt;-->
-        <!--      </include>-->
-        <!--    </model>-->
-        <!--    <model name="ddr_2">-->
-        <!--      <pose>0 -2.5 0 0 0 1.57</pose>-->
-        <!--      <include>-->
-        <!--        <uri>model://ddr_2</uri>&lt;!&ndash;核心&ndash;&gt;-->
-        <!--      </include>-->
-        <!--    </model>-->
+
         <model name="start_mark">
             <pose>0 0 0 0 0</pose>
             <include>
@@ -194,19 +177,55 @@
                 <uri>model://DDR_red</uri>
             </include>
         </model>
-        <!--        <model name="ddr_3">-->
-        <!--            <pose>0 -3 0 0 0 1.57</pose>-->
-        <!--            <include>-->
-        <!--                <uri>model://DDR_red</uri>-->
-        <!--            </include>-->
-        <!--        </model>-->
-        <!--        <model name="ddr_4">-->
-        <!--            <pose>0 -4 0 0 0 1.57</pose>-->
-        <!--            <include>-->
-        <!--                <uri>model://DDR_red</uri>-->
-        <!--            </include>-->
-        <!--        </model>-->
 
+        <model name="ddr_3">
+            <pose>0 -3 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_4">
+            <pose>0 -3.5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_5">
+            <pose>0 -4 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_6">
+            <pose>0 -4.5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_7">
+            <pose>0 -5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_8">
+            <pose>0 -5.5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_9">
+            <pose>0 -6 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
+        <model name="ddr_10">
+            <pose>0 -6.5 0 0 0 1.57</pose>
+            <include>
+                <uri>model://DDR_red</uri>
+            </include>
+        </model>
 
         <!--    <model name="start_plane">-->
         <!--      <pose>0 0 0 0 0 0</pose>-->
