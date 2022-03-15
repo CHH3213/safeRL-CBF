@@ -25,6 +25,8 @@ class RobotariumEnv(core.Env):
         self.goal_pos = np.array([1.5, 1.5])
         self.agent_number = 30
         self.dt = 0.02
+        self.second = False
+        self.first = True
         # agent 初始位置
         # a = np.array([[3. * np.random.rand() - 1.5, 3. * np.random.rand() - 1.5, 0]]).T
         a = np.array([[6. * np.random.rand() - 3, 6. * np.random.rand() - 3, 0]]).T
@@ -116,12 +118,30 @@ class RobotariumEnv(core.Env):
                 done = True
                 reward -= 500
 
-        # Check if goal is met
         if self.goal_met():
             print('Reach goal successfully!')
             info['goal_met'] = True
             reward += 500
             done = True
+
+        # # Check if goal is met
+        # if self.goal_met() and self.first:
+        #     print('Reach goal successfully!')
+        #     info['goal_met'] = True
+        #     reward += 500
+        #     # done = True
+        #     self.second = True
+        #     self.first = False
+        #     self.goal_pos = np.array([-0.5, -0.5])
+        # if self.goal_met() and self.second:
+        #     print('Reach goal successfully!')
+        #     info['goal_met'] = True
+        #     reward += 500
+        #     # done = True
+        #     self.second = False
+        #     self.first = False
+        # if not self.second and not self.first:
+        #     done = True
         else:
             reward -= 0.1 * dist_goal
             # reward += 10 * (self.last_goal_dist - dist_goal)
