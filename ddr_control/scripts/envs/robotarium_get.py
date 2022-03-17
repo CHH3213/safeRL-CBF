@@ -35,7 +35,7 @@ class Robotarium:
         self.set_model_state_proxy = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
         self.get_model_state_proxy = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
         self.Rot = Rotate()
-        self.rate = rospy.Rate(10)
+        # self.rate = rospy.Rate(10)
 
     def setModelState(self, model_state):
         rospy.wait_for_service('/gazebo/set_model_state')
@@ -61,7 +61,7 @@ class Robotarium:
         model_angular = [model_twist.angular.x, model_twist.angular.y, model_twist.angular.z]
         # print([model_position,model_orientation,model_linear,model_angular])
         # 位置，姿态，线速度，角速度
-        self.rate.sleep()
+        # self.rate.sleep()
         return [model_position, model_attitude, model_pose0, model_linear, model_angular]
 
     def resetWorld(self):
