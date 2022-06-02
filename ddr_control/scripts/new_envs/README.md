@@ -1,0 +1,9 @@
+control_robotarium_ros：小车控制程序
+
+rl_ros_robotarium_env：ros，所有小车都在两个目标点间来回运输，3两小车作为追击 rl_ros_robotarium_env_backup20220317：仅仅一辆车来回目标点
+
+ros_robotarium_get：小车状态、目标点设置程序
+
+rl_ros_robotarium_env_multi_target:每两辆小车去一个目标点，共4个目标点
+
+
