@@ -105,7 +105,7 @@ class Evaluator(object):
                         # safe_a = (safe_a+noise).clip(-2.5,2.5)
                         safe_a = safe_a+noise
 
-                    actions[index, 1] = safe_a
+                    actions[index] = safe_a
                 temp = time.time()
                 next_states = env.step(actions)
                 # print('step_time', time.time() - temp)
@@ -228,8 +228,8 @@ class Evaluator(object):
 def test(agent, env, index, evaluate, model_path, visualize=True, debug=False):
     agent.load_weights(model_path)
 
-    def policy(observation):
-        action = agent.select_action(observation, evaluate=True)
+    def policy(observation, other_s):
+        action = agent.select_action(observation,other_s, evaluate=True)
         return action
 
     evaluate(env, policy, index, debug=debug, visualize=visualize, save=True)

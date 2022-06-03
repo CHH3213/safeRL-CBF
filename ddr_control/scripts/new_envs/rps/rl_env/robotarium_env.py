@@ -44,6 +44,19 @@ class RobotariumEnv(core.Env):
         self.goal_train_random = np.array([[0, 0], [4, 4], [-4, 4], [-4, -4], [4, -4]]) #20220417 
         self.second = [False for _ in range(self.agent_number)]
         self.first = [True for _ in range(self.agent_number)]
+
+        # TODO goal pose 写成所有agent的目标
+        next_goal = 2
+        self.goal_pos_next = np.array([np.array([next_goal, next_goal]), np.array([next_goal, next_goal]),
+                              np.array([-next_goal, next_goal]), np.array([-next_goal, next_goal]),
+                              np.array([-next_goal, -next_goal]), np.array([-next_goal, -next_goal]),
+                              np.array([next_goal, -next_goal]), np.array([next_goal, -next_goal])])
+        origin_goal = 0
+        self.goal_pos_origin = np.array([np.array([origin_goal, origin_goal]), np.array([origin_goal, origin_goal]),
+                              np.array([-origin_goal, origin_goal]), np.array([-origin_goal, origin_goal]),
+                              np.array([-origin_goal, -origin_goal]), np.array([-origin_goal, -origin_goal]),
+                              np.array([origin_goal, -origin_goal]), np.array([origin_goal, -origin_goal])])
+        
         # agent 初始位置
         # a = np.array([[3. * np.random.rand() - 1.5, 3. * np.random.rand() - 1.5, 0]]).T
         if args.mode == "train":
@@ -142,8 +155,7 @@ class RobotariumEnv(core.Env):
                 print('Get caught, mission failed !')
                 self.get_caught +=1
                 done = True
-                # reward -= 1000
-                reward = -1000
+                reward -= 500
                 return reward, done, info
         for idx in range(np.size(self.hazards_locations, 0)):
             distSqr = (self_state[0] - self.hazards_locations[idx][0]) ** 2 + \
@@ -152,8 +164,7 @@ class RobotariumEnv(core.Env):
                 print('Get collision, mission failed !')
                 done = True
                 self.collison_obstacle+=1
-                # reward -= 1000
-                reward = -1000
+                reward -= 500
                 return reward, done, info
         if self.args.mode != "train":
             """======goal reward==========="""
@@ -165,7 +176,7 @@ class RobotariumEnv(core.Env):
                 # done = True
                 self.second[index] = True
                 self.first[index] = False
-                self.goal_pos[index] = np.array([0, 0])
+                self.goal_pos[index] = self.goal_pos_origin[index]
             elif self.goal_met(index) and self.second[index]:
                 # print(self.goal_pos)
                 print('Reach second goal successfully!')
@@ -174,17 +185,18 @@ class RobotariumEnv(core.Env):
                 # done = True
                 self.second[index] = False
                 self.first[index] = False
-                self.goal_pos[index] = np.array([2, 2])
+                self.goal_pos[index] =  self.goal_pos_next[index]
             elif self.goal_met(index) and (self.goal_pos[index] == np.array([2, 2])).all():
                 print('Reach first goal successfully again!')
                 info['goal_met'] = True
                 reward += 1000
-                self.goal_pos[index] = np.array([0, 0])
+                self.goal_pos[index] = self.goal_pos_origin[index]
             elif self.goal_met(index) and (self.goal_pos[index] == np.array([0, 0])).all():
                 print('Reach first goal successfully again!')
                 info['goal_met'] = True
                 reward += 1000
-                self.goal_pos[index] = np.array([2, 2])
+                self.is_success_2 = True
+                self.goal_pos[index] = self.goal_pos_next[index]
 
             if not self.second[index] and not self.first[index]:
                 self.is_success = True
@@ -193,29 +205,45 @@ class RobotariumEnv(core.Env):
             if self.goal_met(index):
                 print('Reach goal successfully!')
                 info['goal_met'] = True
-                # reward += 1000
-                reward = +1000
+                reward += 500
                 done = True
             else:
-                # reward -= 0.1 * dist_goal
-                reward += 10 * (self.last_goal_dist - dist_goal)
+                reward -= 0.1 * dist_goal
 
         self.last_goal_dist = dist_goal
 
         if self.max_episode_steps <= self.episode_step:
             done = True
-        # # Include constraint cost in reward
-        # if np.any(np.sum((self_state[:2] - self.hazards_locations[:, :2]) ** 2, axis=1) < self.hazards_radius ** 2):
-        #     if 'cost' in info:
-        #         info['cost'] += 0.1
-        #     else:
-        #         info['cost'] = 0.1
-        # print(reward)
+
         return reward, done, info
     
     def _is_success(self):
         """return whether succeed to real goal """
-        return self.is_success
+        return self.is_success, self.is_success_2
+
+    def nearest_obstacle(self, index):
+        hazard_dist_list = []
+        self_state = self.states[index]
+        for o_s in self.hazards_locations:
+            hazard_dist = np.linalg.norm(o_s[0:2] - self_state[:2])
+            hazard_dist_list.append(hazard_dist)
+        ind = np.argmin(hazard_dist_list)
+        self.nearest_loca = copy.deepcopy(self.hazards_locations[ind])
+        return self.nearest_loca
+
+    def nearest_agent(self, index):
+        """
+        返回当前索引为index的智能体和距离当前索引为index的智能体最近的智能体的状态信息
+        """
+        dist_list = []
+        self_state = self.states[index]
+        other_agent_s = np.delete(self.states, index, 0)  # 除去自身
+        for o_s in other_agent_s:
+            dist = np.linalg.norm(o_s[0:2] - self_state[:2])
+            dist_list.append(dist)
+        ind = np.argmin(dist_list)
+
+        return np.vstack((self_state, other_agent_s[ind]))
 
     def goal_met(self, index):
         """Return true if the current goal is met this step

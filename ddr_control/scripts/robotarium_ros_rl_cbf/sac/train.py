@@ -63,8 +63,8 @@ def train(agent, env, args, experiment=None, index=0):
             for idx in range(0, N):
                 if idx == index:
                     continue
-                actions[idx, 1] = simple_pursuit(states[idx], states[index])
-                # actions[idx, 1] = 0.15
+                # actions[idx, 1] = simple_pursuit(states[idx], states[index])
+                actions[idx, 1] = np.random.uniform(-1, 1)
                 # actions[idx, 1] = CBF([actions[idx, 1]], all_states_, idx)
             # print(args.use_cbf)
 
@@ -122,13 +122,13 @@ def train(agent, env, args, experiment=None, index=0):
             episodes = 1
             for _ in range(episodes):
                 states = env.reset(True)
-                obs = env.get_obs(index)
+                obs, other_s = env.get_obs(index)
 
                 episode_reward = 0
                 done = False
                 while not done:
                     start = time.time()
-                    action = agent.select_action(obs,
+                    action = agent.select_action(obs,other_s,
                                                  evaluate=True)  # Sample action from policy
 
                     all_states_ = np.vstack((states, env.hazards_locations))
@@ -143,7 +143,7 @@ def train(agent, env, args, experiment=None, index=0):
                     actions[index, 1] = safe_a
                     next_states = env.step(actions)
                     reward, done, info = env._reward_done(index)
-                    next_obs = env.get_obs(index)
+                    next_obs,other_s = env.get_obs(index)
                     states = next_states
                     episode_reward += reward
                     obs = next_obs

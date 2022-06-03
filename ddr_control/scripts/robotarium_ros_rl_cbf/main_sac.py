@@ -147,9 +147,8 @@ if __name__ == "__main__":
                 # from new_envs.rl_ros_robotarium_env_multi_target import RobotariumEnv
                 # from new_envs.rl_ros_robotarium_env_multi_target_backup20220501 import RobotariumEnv
             else:
-                # from rps.rl_env.robotarium_env_multi_target import RobotariumEnv  # cbf test used
-                from new_envs.rps.rl_env.robotarium_env_multi_target_10agents import RobotariumEnv  # cbf test used
-
+                from new_envs.rps.rl_env.robotarium_env_multi_target import RobotariumEnv  # cbf test used
+                # from new_envs.rps.rl_env.robotarium_env_multi_target_10agents import RobotariumEnv  # cbf test used
     else:
         if args.mode == "train":
 
