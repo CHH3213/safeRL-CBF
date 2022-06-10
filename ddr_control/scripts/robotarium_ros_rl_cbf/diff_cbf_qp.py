@@ -1,8 +1,7 @@
 import argparse
 import numpy as np
 import torch
-from rcbf_sac.dynamics import DYNAMICS_MODE
-from rcbf_sac.utils import to_tensor, prRed, prCyan
+from sac.utils import to_tensor, prRed, prCyan
 from time import time
 from qpth.qp import QPFunction
 
@@ -231,16 +230,9 @@ class CBFQPLayer:
         # bmm pytorch tensor相乘 p*m*n,p*n*l-->p*m*l
         g_ps = torch.bmm(Rs, Ls)  # (batch_size, 2, 2)  
 
-        # D_p(x) = g_p [0 D_θ]^T + [D_x1 D_x2]^T
-        # mu_theta_aug = torch.zeros([batch_size, 2, 1]).to(self.device)
-        # mu_theta_aug[:, 1, :] = mean_pred_batch[:, 2, :]
-        # mu_ps = torch.bmm(g_ps, mu_theta_aug) + mean_pred_batch[:, :2, :]
-        # sigma_theta_aug = torch.zeros([batch_size, 2, 1]).to(self.device)
-        # sigma_theta_aug[:, 1, :] = sigma_pred_batch[:, 2, :]
-        # sigma_ps = torch.bmm(torch.abs(g_ps), sigma_theta_aug) + sigma_pred_batch[:, :2, :]
 
         # hs (batch_size, hazards_locations)
-        ps_hzds = ps.repeat((1, num_cbfs)).reshape((batch_size, num_cbfs, 2))
+        ps_hzds = ps.repeat((1, num_cbfs)).reshape((batch_size, num_cbfs, -1))
 
         # print('p',np.shape(ps_hzds))
         # print('state',np.shape(other_state_batch.view(batch_size, num_cbfs, -1)))

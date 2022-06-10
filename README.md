@@ -41,25 +41,7 @@
 
 进入`robotarium_ros_rl_cbf`文件夹
 
-- 运行`ros_rl_main.py`文件，进行算法的训练，使用的是ros环境。
-  ```shell
-  python ros_rl_main.py --cuda --eval False
-  ```
-  测试：
-  ```shell
-  python ros_rl_main.py --cuda --mode test --resume ./output/...  --visualize
-  ```
-- 运行`main.py`文件，进行算法的训练，使用的是robotarium环境。
-  ```shell
-    python main.py --cuda --eval False --max_episodes 600 --log_comet   
-  
-  ```
-  测试：
-  ```shell
-  python main.py --cuda --mode test --resume ./output/...  --visualize
-  ```
-  如：
-  ```python
-  python ros_rl_main.py --mode test --resume ./output/Robotarium-run20 --visualize
-  ```
-- 运行`test_robotarium.py`文件，只进行CBF测试，使用的是robotarium环境。
+- `sac`文件夹存储的是sac算法相关的文件
+- `main_sac.py`是sac算法训练测试的主函数
+- `td3`文件夹存储的是td3算法相关的文件
+- `main_td3.py`是sac算法训练测试的主函数

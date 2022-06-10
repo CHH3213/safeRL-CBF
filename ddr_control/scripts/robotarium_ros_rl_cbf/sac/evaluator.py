@@ -143,9 +143,11 @@ class Evaluator(object):
                 # print(is_judge_success)
                 # print(states)
                 observations = []
+                others_s = []
                 for index in index_list:
-                    observation = env.get_obs(index)
+                    observation,other_s = env.get_obs(index)
                     observations.append(observation)
+                    others_s.append(other_s)
                 states = next_states
                 episode_reward += reward
                 episode_steps += 1

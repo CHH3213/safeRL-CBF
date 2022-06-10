@@ -5,7 +5,7 @@ from sac.utils import soft_update, hard_update
 from sac.model import GaussianPolicy, QNetwork, DeterministicPolicy
 import numpy as np
 from sac.utils import to_tensor,to_numpy
-from sac.diff_cbf_qp import CBFQPLayer
+from diff_cbf_qp import CBFQPLayer
 
 
 class SAC(object):
@@ -55,10 +55,10 @@ class SAC(object):
     def select_action(self, state,other_state, evaluate=False, warmup=False):
 
         state = to_tensor(state, torch.FloatTensor, self.device)
+        # print(np.shape(state))
         expand_dim = len(state.shape) == 1
         if expand_dim:
             state = state.unsqueeze(0)
-
         if warmup:
             batch_size = state.shape[0]
             action = torch.zeros((batch_size, self.action_space.shape[0])).to(self.device)
@@ -69,6 +69,7 @@ class SAC(object):
                 action, _, _ = self.policy.sample(state)
             else:
                 _, _, action = self.policy.sample(state)
+        # print(np.shape(other_state))
         safe_action = self.get_safe_action(state, other_state, action)
 
         return safe_action.detach().cpu().numpy()[0] if expand_dim else action.detach().cpu().numpy()
@@ -89,14 +90,13 @@ class SAC(object):
 
         state_batch, other_state_batch, action_batch, reward_batch, next_state_batch, mask_batch, t_batch, next_t_batch = memory.sample(
                 batch_size=batch_size)
-
         state_batch = torch.FloatTensor(state_batch).to(self.device)
         other_state_batch = torch.FloatTensor(other_state_batch).to(self.device)
         next_state_batch = torch.FloatTensor(next_state_batch).to(self.device)
         action_batch = torch.FloatTensor(action_batch).to(self.device)
         reward_batch = torch.FloatTensor(reward_batch).to(self.device).unsqueeze(1)
         mask_batch = torch.FloatTensor(mask_batch).to(self.device).unsqueeze(1)
-
+        # print(np.shape(state_batch),np.shape(other_state_batch),np.shape(action_batch),np.shape(reward_batch),np.shape(next_state_batch),np.shape(mask_batch))
         with torch.no_grad():
             next_state_action, next_state_log_pi, _ = self.policy.sample(next_state_batch)
             if self.use_cbf:  # 使用CBF 层

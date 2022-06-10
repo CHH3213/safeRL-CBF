@@ -9,7 +9,11 @@ from matplotlib import patches
 import matplotlib.pyplot as plt
 import rospy
 import copy
-
+"""测试时使用
+2022.6.10
+Returns:
+    _type_: _description_
+"""
 class RobotariumEnv(core.Env):
     def __init__(self, args=None):
         # Define action and observation space
@@ -38,17 +42,26 @@ class RobotariumEnv(core.Env):
         self.get_caught = 0
         self.dt = 0.02
         # TODO goal pose 写成所有agent的目标
-        next_goal = 2
-        self.goal_pos_next = np.array([np.array([next_goal, next_goal]), np.array([next_goal, next_goal]),
-                              np.array([-next_goal, next_goal]), np.array([-next_goal, next_goal]),
-                              np.array([-next_goal, -next_goal]), np.array([-next_goal, -next_goal]),
-                              np.array([next_goal, -next_goal]), np.array([next_goal, -next_goal])])
-        origin_goal = 0
-        self.goal_pos_origin = np.array([np.array([origin_goal, origin_goal]), np.array([origin_goal, origin_goal]),
-                              np.array([-origin_goal, origin_goal]), np.array([-origin_goal, origin_goal]),
-                              np.array([-origin_goal, -origin_goal]), np.array([-origin_goal, -origin_goal]),
-                              np.array([origin_goal, -origin_goal]), np.array([origin_goal, -origin_goal])])
+        if args.agent_number==3:
+            next_goal = 2
+            origin_goal = 0
+        else:
+            next_goal = 3
+            origin_goal = 1
         
+        self.goal_pos_next = np.array([
+                                np.array([next_goal, next_goal]), np.array([next_goal, next_goal]),
+                                np.array([-next_goal, next_goal]), np.array([-next_goal, next_goal]),
+                                np.array([-next_goal, -next_goal]), np.array([-next_goal, -next_goal]),
+                                np.array([next_goal, -next_goal]), np.array([next_goal, -next_goal])
+                                ])
+        
+        self.goal_pos_origin = np.array([
+                                np.array([origin_goal, origin_goal]), np.array([origin_goal, origin_goal]),
+                                np.array([-origin_goal, origin_goal]), np.array([-origin_goal, origin_goal]),
+                                np.array([-origin_goal, -origin_goal]), np.array([-origin_goal, -origin_goal]),
+                                np.array([origin_goal, -origin_goal]), np.array([origin_goal, -origin_goal])
+                                ])
         # 障碍物位置
         locations = 1.
         if self.agent_number == 10:

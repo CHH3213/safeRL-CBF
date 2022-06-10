@@ -87,6 +87,7 @@ def train(agent, env, args, experiment=None, index=0):
             # Ignore the "done" signal if it comes from hitting the time horizon.
             # (https://github.com/openai/spinningup/blob/master/spinup/algos/sac/sac.py)
             mask = 1 if episode_steps == env.max_episode_steps else float(not done)
+            # print(np.shape(obs),np.shape(other_s),np.shape(action),np.shape(reward),np.shape(next_obs),np.shape(mask))
 
             memory.push(obs,other_s, action, reward, next_obs, mask, t=episode_steps * env.dt,
                         next_t=(episode_steps + 1) * env.dt)  # Append transition to memory
@@ -117,7 +118,7 @@ def train(agent, env, args, experiment=None, index=0):
                                                                                     ))
 
         # Evaluation
-        if (i_episode + 1) % 50 == 0 and args.eval is True:
+        if (i_episode + 1) % 10 == 0 and args.eval is True:
             avg_reward = 0.
             episodes = 1
             for _ in range(episodes):
@@ -135,12 +136,12 @@ def train(agent, env, args, experiment=None, index=0):
                     for idx in range(0, N):
                         if idx == index:
                             continue
-                        actions[idx, 1] = simple_pursuit(states[idx], states[index])
+                        # actions[idx, 1] = simple_pursuit(states[idx], states[index])
                         actions[idx, 0] = 0.15 * 0.95
                         # actions[idx, 1] = CBF([actions[idx, 1]], all_states_, idx)
 
                     safe_a = action
-                    actions[index, 1] = safe_a
+                    actions[index] = safe_a
                     next_states = env.step(actions)
                     reward, done, info = env._reward_done(index)
                     next_obs,other_s = env.get_obs(index)

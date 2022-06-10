@@ -38,14 +38,13 @@ if __name__ == "__main__":
     parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
     parser.add_argument('--k_d', default=1.5, type=float)
     parser.add_argument('--gamma_b', default=500, type=float)
-    parser.add_argument('--l_p', default=0.05, type=float,
-                        help="Look-ahead distance for unicycle dynamics output.")
+    parser.add_argument('--l_p', default=0.05, type=float, help="Look-ahead distance for unicycle dynamics output.")
 
 
     parser.add_argument('--restore', type=bool, default=False, help='Should the compensator be used.')
     parser.add_argument('--visualize', action='store_true', dest='visualize',
                         help='visualize env -only in available test mode')
-    parser.add_argument('--output', default='output', type=str, help='')
+    parser.add_argument('--output', default='./sac/output', type=str, help='')
     parser.add_argument('--policy', default="Gaussian",
                         help='Policy Type: Gaussian | Deterministic (default: Gaussian)')
     parser.add_argument('--eval', action="store_true",
@@ -115,9 +114,9 @@ if __name__ == "__main__":
 
     if args.mode == 'train' and args.log_comet:
         if args.use_cbf:
-            project_name = 'cbf-layer-environment'
+            project_name = 'cbf-layer-environment-sac'
         else:
-            project_name = 'no_cbf-layer-environment'
+            project_name = 'no_cbf-layer-environment-sac'
         prYellow('Logging experiment on comet.ml!')
         # Create an experiment with your api key
         experiment = Experiment(
@@ -128,8 +127,7 @@ if __name__ == "__main__":
         # Log args on comet.ml
         experiment.log_parameters(vars(args))
 
-        experiment_tags = [str(args.batch_size) + '_batch',
-                           str(args.updates_per_step) + '_step_updates']
+        experiment_tags = [str(args.batch_size) + '_batch']
 
         print(experiment_tags)
         experiment.add_tags(experiment_tags)
@@ -138,27 +136,14 @@ if __name__ == "__main__":
 
     # Environment
     print('use cbf:', args.use_cbf)
-    if args.use_cbf:
-        if args.mode == "train":
-            from new_envs.rps.rl_env.robotarium_env import RobotariumEnv  # cbf train used
-        else:
-            if args.ros_env:
-                from new_envs.rl_ros_robotarium_env import RobotariumEnv
-                # from new_envs.rl_ros_robotarium_env_multi_target import RobotariumEnv
-                # from new_envs.rl_ros_robotarium_env_multi_target_backup20220501 import RobotariumEnv
-            else:
-                from new_envs.rps.rl_env.robotarium_env_multi_target import RobotariumEnv  # cbf test used
-                # from new_envs.rps.rl_env.robotarium_env_multi_target_10agents import RobotariumEnv  # cbf test used
+    if args.mode == "train":
+        from new_envs.rps.rl_env.robotarium_env import RobotariumEnv  # cbf train used
     else:
-        if args.mode == "train":
-
-            from new_envs.rps.rl_env.robotarium_env_nocbf import RobotariumEnv  # no cbf train used
+        if args.ros_env:
+            from new_envs.rl_ros_robotarium_env import RobotariumEnv
+            # from new_envs.rl_ros_robotarium_env_multi_target import RobotariumEnv
         else:
-            if args.ros_env:
-                # from new_envs.rl_ros_robotarium_env import RobotariumEnv
-                from new_envs.rl_ros_robotarium_env_nocbf_multi_target import RobotariumEnv
-            else:
-                from new_envs.rps.rl_env.robotarium_env_nocbf_multi_target import RobotariumEnv  # no cbf test used
+            from new_envs.rps.rl_env.robotarium_env_multi_target import RobotariumEnv  # cbf test used
 
     env = RobotariumEnv(args)
     if args.mode == 'train' and args.log_comet:

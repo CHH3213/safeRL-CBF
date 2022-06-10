@@ -52,8 +52,8 @@ class RobotariumEnv(core.Env):
             self.ddr_name.append('ddr_' + str(i))
 
         # Example when using discrete actions:
-        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(1,))
-        self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(1,))
+        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
+        self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(2,))
         self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(7,))
 
         # Initialize Env

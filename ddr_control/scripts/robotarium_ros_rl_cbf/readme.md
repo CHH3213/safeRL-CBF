@@ -5,7 +5,7 @@
 ### 训练时运行
 
 ```shell
- python main.py --mode train --cuda --device_num 2 --max_episodes 3500 --model_number 001 --use_cbf --log_comet  
+ python main_td3.py --mode train --cuda --device_num 0 --max_episodes 3500 --model_number 001 --use_cbf --log_comet  
 ```
 
 ### 测试：
@@ -31,7 +31,7 @@ python main.py --mode test  --seed 133 --cuda --device_num 3 --model_number 2022
 ### 训练时运行
 
 ```shell
-python main_sac.py --cuda --device_num 1 --use_cbf  --eval --max_episodes 1000 --log_comet   
+python main_sac.py --cuda --device_num 0 --use_cbf  --eval --max_episodes 1000 --log_comet   
 ```
 
 > --use_cbf 为使用cbf；若不使用cbf，则不带这个参数即可。

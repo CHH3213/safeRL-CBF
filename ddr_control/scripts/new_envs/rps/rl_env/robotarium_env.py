@@ -8,7 +8,7 @@ from rps.robotarium import Robotarium
 from matplotlib import patches
 import matplotlib.pyplot as plt
 import rospy
-
+import copy
 
 class RobotariumEnv(core.Env):
     def __init__(self, args=None):
@@ -20,17 +20,15 @@ class RobotariumEnv(core.Env):
         self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(7,))
         # self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(11,))
         # 障碍物位置
-        # self.hazards_locations = np.array([[-1.5, 0., 0.], [1.5, 0., 0.], [0.0, 1.5, 0.], [0.0, -1.5, 0.]])
-        # self.hazards_locations = np.array([[1.5, 0, 0]])
-        self.hazards_locations = np.array([[1, 1., 0.], [1.5, 0., 0.], [0.0, 1.5, 0.]])
+        self.hazards_locations = np.array([[1, 1., 0.],[-1.5, 0., 0.], [1.5, 0., 0.], [0.0, 1.5, 0.], [0.0, -1.5, 0.]])
         self.hazards_radius = 0.25  # 障碍物半径
         self.args = args
         if args.mode != "train":
-            self.max_episode_steps = 3000  # eval
+            self.max_episode_steps = 1000  # eval
             # self.agent_number = 10
             self.agent_number = 3
         else:
-            self.max_episode_steps = 3000
+            self.max_episode_steps = 1000
             self.agent_number = 2
         self.goal_size = 0.3  # 目标点大小
         # Initialize Env
@@ -39,9 +37,8 @@ class RobotariumEnv(core.Env):
         self.get_caught = 0
         self.dt = 0.02
         # TODO goal pose 写成所有agent的目标
-        self.goal_pos = [np.array([4, 4]) for _ in range(self.agent_number)]
-        # self.goal_train_random = np.array([[0, 0], [3, 3], [-3, 3], [-3, -3], [3, -3]]) #原训练
-        self.goal_train_random = np.array([[0, 0], [4, 4], [-4, 4], [-4, -4], [4, -4]]) #20220417 
+        self.goal_pos = [np.array([2, 2]) for _ in range(self.agent_number)]
+        self.goal_train_random = np.array([[0, 0], [2, 2], [-2, 2], [-2, -2], [2, -2]]) #原训练
         self.second = [False for _ in range(self.agent_number)]
         self.first = [True for _ in range(self.agent_number)]
 
@@ -277,7 +274,7 @@ class RobotariumEnv(core.Env):
             self.initial_conditions = a
             for _ in range(1, self.agent_number):
                 self.initial_conditions = np.concatenate((self.initial_conditions, np.array(
-                    [[10. * np.random.rand() - 5, 10. * np.random.rand() - 5, 6.28 * np.random.rand() - 3.14]]).T),
+                    [[6. * np.random.rand() - 3, 6. * np.random.rand() - 3, 6.28 * np.random.rand() - 3.14]]).T),
                                                          axis=1)
         else:
             self.goal_pos = [np.array([2, 2]) for _ in range(self.agent_number)]
@@ -297,19 +294,21 @@ class RobotariumEnv(core.Env):
 
         self.agents = Robotarium(number_of_robots=self.agent_number, show_figure=is_show_figure,
                                  initial_conditions=self.initial_conditions, sim_in_real_time=False)
-        # if (is_show_figure):
-        #     self.agents.axes.add_patch(
-        #         patches.Circle(self.hazards_locations[0][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle 1
-        #     self.agents.axes.add_patch(
-        #         patches.Circle(self.hazards_locations[1][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle 2
-        #     self.agents.axes.add_patch(
-        #         patches.Circle(self.hazards_locations[2][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle
-        #     self.agents.axes.add_patch(
-        #         patches.Circle(self.hazards_locations[3][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle
-        #     self.agents.axes.add_patch(
-        #         patches.Circle(self.goal_pos[0], self.goal_size, fill=False, zorder=10))  # target
-        #     self.agents.axes.add_patch(
-        #         patches.Circle(np.array([0, 0]), self.goal_size, fill=False, zorder=10))  # target
+        if (is_show_figure):
+            self.agents.axes.add_patch(
+                patches.Circle(self.hazards_locations[0][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle 1
+            self.agents.axes.add_patch(
+                patches.Circle(self.hazards_locations[1][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle 2
+            self.agents.axes.add_patch(
+                patches.Circle(self.hazards_locations[2][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle
+            self.agents.axes.add_patch(
+                patches.Circle(self.hazards_locations[3][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle
+            self.agents.axes.add_patch(
+                patches.Circle(self.hazards_locations[4][0:2], self.hazards_radius - 0.1, fill=True))  # Obstacle
+            self.agents.axes.add_patch(
+                patches.Circle(self.goal_pos[0], self.goal_size, fill=False, zorder=10))  # target
+            self.agents.axes.add_patch(
+                patches.Circle(np.array([0, 0]), self.goal_size, fill=False, zorder=10))  # target
 
         self.states = self.agents.get_poses().T
         self.agents.step()
@@ -352,28 +351,7 @@ class RobotariumEnv(core.Env):
 
         return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
                          goal_compass[1], np.exp(-goal_dist)]), other_s
-        # return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
-        #                  goal_compass[1]])
-        # return np.array([goal_compass[0],goal_compass[1], np.exp(-goal_dist)]), other_s
 
-        """全部维度的训练，最近的智能体，全部障碍物，自己的相对位置"""
-        # other_agent_s = np.delete(self.states, index, 0)  # 除去自身
-        # other_s = np.vstack((other_agent_s, self.hazards_locations))
-        # temp_obs = goal_compass[0:2]
-        # temp_obs = np.concatenate((temp_obs, [np.exp(-goal_dist)]))  # 添加一维
-
-        # dist_list = []
-        # for o_s in other_agent_s:
-        #     agent_dist = np.linalg.norm(o_s[0:2] - self_state[:2])
-        #     dist_list.append(agent_dist)
-        # idx = np.argmin(dist_list)
-        # rel_o_s = other_agent_s[idx, 0:2] - self_state[:2]
-
-        # temp_obs = np.concatenate((temp_obs, rel_o_s))
-
-        # for o_s in self.hazards_locations:
-        #     temp_obs = np.concatenate((temp_obs, o_s[0:2] - self_state[:2]))
-        # return temp_obs
 
     def obs_compass(self, index):
         """

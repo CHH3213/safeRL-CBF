@@ -3,9 +3,9 @@
 """
 ==========safe-rl-cbf===============
 @File: rl_ros_robotarium_env
-@Time: 2022/3/11 下午8:09
+@Time: 2022/6/10 下午8:09
 @Author: chh3213
-@Description: 作为3个agents时的测试，省得于10个agents的目标位置搞混
+@Description: 作为10个agents的测试环境，3个agents仅仅目标点和障碍物的位置不同
 10个agents：目标点为(1,1),(3,3),障碍物为(2,2)
 3个agents：目标点为(0,0),(2,2),障碍物为(1,1)
 ========Above the sun, full of fire!=============
@@ -38,11 +38,10 @@ class RobotariumEnv(core.Env):
         # TODO：代码运行频率星需要根据实际情况调整
         self.rate = rospy.Rate(50)
         self.args = args
-        self.is_success_2 = False
 
         if args.mode != "train":
-            self.max_episode_steps = 4000  # eval
-            self.agent_number = 3
+            self.max_episode_steps = 5000  # eval
+            self.agent_number = 10
         else:
             self.max_episode_steps = 1500
             self.agent_number = 1
@@ -66,16 +65,26 @@ class RobotariumEnv(core.Env):
         # TODO:目标点设置、障碍物设置
         self.goal_size = 0.25  # 目标点大小
         # TODO:每两辆小车两个目标点来回  0~8作为可控小车
-        next_goal = 2
-        self.goal_pos_next = np.array([np.array([next_goal, next_goal]), np.array([next_goal, next_goal]),
-                              np.array([-next_goal, next_goal]), np.array([-next_goal, next_goal]),
-                              np.array([-next_goal, -next_goal]), np.array([-next_goal, -next_goal]),
-                              np.array([next_goal, -next_goal]), np.array([next_goal, -next_goal])])
-        origin_goal = 0
-        self.goal_pos_origin = np.array([np.array([origin_goal, origin_goal]), np.array([origin_goal, origin_goal]),
-                              np.array([-origin_goal, origin_goal]), np.array([-origin_goal, origin_goal]),
-                              np.array([-origin_goal, -origin_goal]), np.array([-origin_goal, -origin_goal]),
-                              np.array([origin_goal, -origin_goal]), np.array([origin_goal, -origin_goal])])
+        if args.agent_number==3:
+            next_goal = 2
+            origin_goal = 0
+        else:
+            next_goal = 3
+            origin_goal = 1
+        
+        self.goal_pos_next = np.array([
+                                np.array([next_goal, next_goal]), np.array([next_goal, next_goal]),
+                                np.array([-next_goal, next_goal]), np.array([-next_goal, next_goal]),
+                                np.array([-next_goal, -next_goal]), np.array([-next_goal, -next_goal]),
+                                np.array([next_goal, -next_goal]), np.array([next_goal, -next_goal])
+                                ])
+        
+        self.goal_pos_origin = np.array([
+                                np.array([origin_goal, origin_goal]), np.array([origin_goal, origin_goal]),
+                                np.array([-origin_goal, origin_goal]), np.array([-origin_goal, origin_goal]),
+                                np.array([-origin_goal, -origin_goal]), np.array([-origin_goal, -origin_goal]),
+                                np.array([origin_goal, -origin_goal]), np.array([origin_goal, -origin_goal])
+                                ])
         
 
         self.goal_pos = copy.deepcopy(self.goal_pos_next)
@@ -83,14 +92,15 @@ class RobotariumEnv(core.Env):
         self.first = [True for _ in range(self.agent_number)]
         self.dt = 0.02
         self.robotarium_state = Robotarium()
+        self.is_success_2 = False
 
         # self.robotarium_state.reset_target(self.goal_pos)
         # 障碍物位置
         # ros
         self.barrier_name = ['barrier_0', 'barrier_1', 'barrier_2']
-        locations = 1.
+        locations = 2
         if self.agent_number == 10:
-            self.hazards_locations = np.array([[locations, locations, 0.], [-locations, locations, 0.], [-locations, -locations, 0.], [locations, -locations, 0.]])
+            self.hazards_locations = np.array([[1.5, 0, 0.],[-1.5, 0, 0.], [0, -1.5, 0.], [0, 1.5, 0.],[locations, locations, 0.], [-locations, locations, 0.], [-locations, -locations, 0.], [locations, -locations, 0.]])
         elif self.agent_number==3:
             self.hazards_locations = np.array([[1.5, 0, 0.],[-1.5, 0, 0.],  [0, 1.5, 0.], [locations, locations, 0.]])
         self.hazards_radius = 0.25  # 障碍物半径
@@ -206,7 +216,9 @@ class RobotariumEnv(core.Env):
                 print('Reach second goal successfully again!')
                 info['goal_met'] = True
                 reward += 1000
-                self.is_success_2 = True # TODO:一個智能體到達兩次也算成功
+                self.is_success_2 = True
+                # print(self.is_success_2)
+
                 self.goal_pos[index] = self.goal_pos_next[index]
             if not self.second[index] and not self.first[index]:
                 # done = True
@@ -232,9 +244,12 @@ class RobotariumEnv(core.Env):
         #         info['cost'] += 0.1
         #     else:
         #         info['cost'] = 0.1
-
         return reward, done, info
 
+    def _is_success(self):
+        """return whether succeed to real goal """
+        return self.is_success, copy.deepcopy(self.is_success_2)
+    
     def nearest_obstacle(self,index):
         """
         返回距离当前索引为index的智能体最近的障碍物的状态信息
@@ -274,9 +289,7 @@ class RobotariumEnv(core.Env):
         self_state = self.states[index]
         return np.linalg.norm(self_state[:2] - self.goal_pos[index]) <= self.goal_size 
 
-    def _is_success(self):
-        """return whether succeed to real goal """
-        return self.is_success, self.is_success_2
+
 
     def reset(self, is_show_figure=False):
         """ Reset the state of the environment to an initial state.
@@ -288,12 +301,14 @@ class RobotariumEnv(core.Env):
         """
         self.robotarium_state.resetWorld()
         # self.robotarium_state.reset_test_agent_random_state(self.ddr_list)  # 测试100回合使用
-        self.robotarium_state.reset_test_agent_state(self.ddr_list)  # 测试时使用
+        self.robotarium_state.reset_test_10agents_state(self.ddr_list)  # 测试时使用
         # self.robotarium_state.reset_target(self.goal_pos_next)
         self.goal_pos = copy.deepcopy(self.goal_pos_next)
         self.second = [False for _ in range(self.agent_number)]
         self.first = [True for _ in range(self.agent_number)]
 
+
+        self.is_success, self.is_success_2 = False,False
         self.states = self.get_pose().T
 
         self.episode_step = 0
@@ -319,35 +334,16 @@ class RobotariumEnv(core.Env):
         observation : ndarray
           Observation: [pos_x, pos_y, cos(theta), sin(theta), xdir2goal, ydir2goal, exp(-dist2goal)]
         """
+        other_agent_s = np.delete(self.states, index, 0)  # 除去自身
+        other_s = np.vstack((other_agent_s, self.hazards_locations))
+        other_s = np.delete(other_s, 2, 1)  # 除去欧拉角
         self_state = self.states[index]
         rel_loc = self.goal_pos[index] - self_state[:2]
         goal_dist = np.linalg.norm(rel_loc)
         goal_compass = self.obs_compass(index)  # compass to the goal
-        other_agent_s = np.delete(self.states, index, 0)  # 除去自身
 
-        # return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
-        #                  goal_compass[1], np.exp(-goal_dist)])
-        return np.array([goal_compass[0], goal_compass[1], np.exp(-goal_dist)])
-
-        """不包括自己的状态,出去后剩下10维"""
-        # temp_obs = goal_compass[0:2]
-        # dist_list = []
-        # for o_s in other_agent_s:
-        #     agent_dist = np.linalg.norm(o_s[0:2] - self_state[:2])
-        #     dist_list.append(agent_dist)
-        # index = np.argmin(dist_list)
-        # # Normalize
-        # rel_o_s = other_agent_s[index, 0:2] - self_state[:2]
-        # rel_o_s /= np.sqrt(np.sum(np.square(rel_o_s))) + 0.001
-        # temp_obs = np.concatenate((temp_obs, rel_o_s))
-        # hazard_dist_list = []
-        # for o_s in self.hazards_locations:
-        #     hazard_dist = np.linalg.norm(o_s[0:2] - self_state[:2])
-        #     hazard_dist_list.append(hazard_dist)
-        # index = np.argmin(hazard_dist_list)
-        # temp_obs = np.concatenate(
-        #     (temp_obs, self.hazards_locations[index, :2]))
-        # return temp_obs
+        return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
+                         goal_compass[1], np.exp(-goal_dist)]), other_s
 
     def obs_compass(self, index):
         """
