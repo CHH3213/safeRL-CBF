@@ -68,10 +68,11 @@ class CBFQPLayer:
         safe_action_batch = self.solve_qp(Ps, qs, Gs, hs)
         # prCyan('Time to get constraints = {} - Time to solve QP = {} - time per qp = {} - batch_size = {} - device = {}'.format(build_qp_time - start_time, time() - build_qp_time, (time() - build_qp_time) / safe_action_batch.shape[0], Ps.shape[0], Ps.device))
         # The actual safe action is the cbf action + the nominal action
-        final_action = torch.clamp(action_batch + safe_action_batch, self.u_min.repeat(action_batch.shape[0], 1),
-                                   self.u_max.repeat(action_batch.shape[0], 1))
         # print('a', action_batch)
         # print('s', safe_action_batch)
+        # print(self.u_max)
+        final_action = torch.clamp(action_batch + safe_action_batch, self.u_min.repeat(action_batch.shape[0], 1),
+                                   self.u_max.repeat(action_batch.shape[0], 1))
         return final_action if not expand_dims else final_action.squeeze(0)
 
     def solve_qp(self, Ps: torch.Tensor, qs: torch.Tensor, Gs: torch.Tensor, hs: torch.Tensor):
