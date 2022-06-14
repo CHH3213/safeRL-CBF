@@ -27,7 +27,7 @@ from controllers.simple_pv import *
 def train(env, args, policy, file_name):
     if args.load_model != "" and args.restore:
         policy_file = file_name if args.load_model == "default" else args.load_model
-        policy.load(f"./models/{policy_file}")
+        policy.load(f"./td3/models/{policy_file}")
 
     # Create an experiment with your api key
     # project_name = 'TAI-td3-ros-Robotarium-environment'
@@ -132,15 +132,15 @@ def train(env, args, policy, file_name):
         all_actions.append(steps_action)
         all_states_save.append(steps_state)
 
-        np.save(f"./results/{file_name}/train_episode_reward", reward_st)
+        np.save(f"./td3/results/{file_name}/train_episode_reward", reward_st)
 
         episode_reward = 0
         episode_timesteps = 0
         episode_num += 1
 
         if i_episode % args.save_freq == 0:
-            policy.save(f"./models/{file_name}")
-            sio.savemat(f"./results/{file_name}" + '/train_data.mat', 
+            policy.save(f"./td3/models/{file_name}")
+            sio.savemat(f"./td3/results/{file_name}" + '/train_data.mat', 
             {
                 'rewards': all_rewards,
                 'actions': all_actions,

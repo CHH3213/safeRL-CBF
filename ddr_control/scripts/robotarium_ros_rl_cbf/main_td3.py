@@ -75,7 +75,7 @@ if __name__ == "__main__":
     if not os.path.exists(f"./td3/results/{file_name}"):
         os.makedirs(f"./td3/results/{file_name}")
 
-    if args.save_model and not os.path.exists(f"./models/{file_name}"):
+    if args.save_model and not os.path.exists(f"./td3/models/{file_name}"):
         os.makedirs(f"./td3/models/{file_name}")
 
     # Environment
