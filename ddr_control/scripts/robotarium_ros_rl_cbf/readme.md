@@ -11,7 +11,7 @@
 ### 测试：
 
 ```shell
-python main.py --mode test  --seed 133 --cuda --device_num 3 --model_number 20220418 --use_cbf --time_delay --disturbance
+python main_td3.py --mode test  --seed 133 --cuda --device_num 3 --model_number 20220418 --use_cbf --time_delay --disturbance
 ```
 
 > --model_number: 为选择的模型序号
@@ -23,7 +23,7 @@ python main.py --mode test  --seed 133 --cuda --device_num 3 --model_number 2022
 
 
 ```shell
-python main.py --mode test  --seed 133 --cuda --device_num 3 --model_number 2022042302 --use_cbf --time_delay --disturbance
+python main_td3.py --mode test  --seed 133 --cuda --device_num 3 --model_number 2022042302 --use_cbf --time_delay --disturbance
 ```
 
 ## SAC
