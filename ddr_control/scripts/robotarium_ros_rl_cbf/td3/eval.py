@@ -32,7 +32,7 @@ global threads
 def eval(env, args, policy, file_name, index_list=[0]):
     if args.load_model != "":
         policy_file = file_name if args.load_model == "default" else args.load_model
-        policy.load(f"./models/{policy_file}")
+        policy.load(f"./td3/models/{policy_file}")
     env.action_space.seed(args.seed)
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -51,8 +51,8 @@ def eval(env, args, policy, file_name, index_list=[0]):
     str_index = str(index_list)[1:-1]
     str_index = str_index.replace(",", "")
     str_index = str_index.replace(" ", "")
-    if not os.path.exists(f"./results/{file_name}/episodes_{args.eval_episodes}"):
-        os.makedirs(f"./results/{file_name}/episodes_{args.eval_episodes}")
+    if not os.path.exists(f"./td3/results/{file_name}/episodes_{args.eval_episodes}"):
+        os.makedirs(f"./td3/results/{file_name}/episodes_{args.eval_episodes}")
 
     for t in tqdm(range(args.eval_episodes)):
         steps_action = []
@@ -86,7 +86,7 @@ def eval(env, args, policy, file_name, index_list=[0]):
             # last_states = copy.deepcopy(states)
             action_list = []
             for idx, observation,other_s in zip(index_list, observations,others_s):
-                action = policy.select_action(np.array(obs))
+                action = policy.select_action(obs,other_s)
                 action_list.append(action)
 
             # print(action)
@@ -212,7 +212,7 @@ def eval(env, args, policy, file_name, index_list=[0]):
         #                 'collison_obstacle': env.collison_obstacle,
         #                 'get_caught': env.get_caught
         #             })
-    sio.savemat(f"./results/{file_name}/episodes_{args.eval_episodes}" + '/gazebo_{}_agent_{}_cbf_{}_disturb_{}_delay_{}_seed_{}_good_{}_{}.mat'.format(
+    sio.savemat(f"./td3/results/{file_name}/episodes_{args.eval_episodes}" + '/gazebo_{}_agent_{}_cbf_{}_disturb_{}_delay_{}_seed_{}_good_{}_{}.mat'.format(
                     args.ros_env, env.agent_number,args.use_cbf,args.disturbance,args.time_delay,args.seed,str_index,time.strftime( "%Y-%m-%d-%H-%M",time.localtime())), 
                         {
                             'origin_actions': all_origin_actions,

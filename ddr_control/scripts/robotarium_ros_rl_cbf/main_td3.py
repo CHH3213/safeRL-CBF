@@ -29,7 +29,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", default=0, type=int)  # Sets Gym, PyTorch and Numpy seeds
     parser.add_argument("--start_timesteps", default=256, type=int)  # Time steps initial random policy is used
     parser.add_argument("--save_freq", default=50, type=int)  # How often (time steps) we evaluate
-    parser.add_argument("--eval_episodes", default=1, type=int, help='how many episode to perform during validate experiment')  # How often (time steps) we evaluate
+    parser.add_argument("--eval_episodes", default=5, type=int, help='how many episode to perform during validate experiment')  # How often (time steps) we evaluate
     parser.add_argument("--max_timesteps", default=1e6, type=int)  # Max time steps to run environment
     parser.add_argument("--max_episodes", default=1000, type=int)  # Max time steps to run environment
     parser.add_argument('--cuda', action="store_true", help='run on CUDA (default: False)')
@@ -58,9 +58,9 @@ if __name__ == "__main__":
     parser.add_argument('--time_delay', action="store_true", help='set the time delaym default:0.')
     parser.add_argument('--disturbance', action="store_true", help='Should the disturbance be added.')
     parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
-    parser.add_argument('--k_d', default=1.5, type=float)
-    parser.add_argument('--gamma_b', default=500, type=float)
-    parser.add_argument('--l_p', default=0.05, type=float, help="Look-ahead distance for unicycle dynamics output.")
+    parser.add_argument('--k_d', default=3, type=float)
+    parser.add_argument('--gamma_b', default=200, type=float)
+    parser.add_argument('--l_p', default=0.15, type=float, help="Look-ahead distance for unicycle dynamics output.")
     parser.add_argument('--ros_env', action="store_true", help='Should the ros gazebo environment be used.')
 
     args = parser.parse_args()
@@ -126,7 +126,7 @@ if __name__ == "__main__":
             # index_list = [0, 2, 3, 5, 6, 8, 9]  # 原来只有两个目标点来回
             index_list = [i for i in range(8)]  # 10 agents
         elif env.agent_number==3:
-            index_list = [0, 1]
+            index_list = [0]
         # index_list = [0, 1, 2, 6, 7, 8, 9]
         # index_list = [0, 1, 2, 3,4,5,6, 7, 8, 9]
         # index_list = [0, 1, 2, 3, 4, 5, 6]

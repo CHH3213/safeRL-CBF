@@ -33,7 +33,7 @@ class CBFQPLayer:
         self.action_dim = env.action_space.shape[0]
         self.num_ineq_constraints = self.num_cbfs + 2 * self.action_dim  # 不等式约束包括cbf约束和控制输入约束
 
-    def get_safe_action(self, state_batch, other_state_batch, action_batch, mean_pred_batch=None, sigma_batch=None):
+    def get_safe_action(self, state_batch, other_state_batch, action_batch):
         """
 
         Parameters
@@ -42,10 +42,7 @@ class CBFQPLayer:
         other_state_batch: torch.tensor or ndarray  为其他智能体与障碍物的位置状态，不包括角度，即shape为[batch_size,2]
         action_batch : torch.tensor or ndarray
             State batch
-        mean_pred_batch : torch.tensor or ndarray
-            Mean of disturbance
-        sigma_batch : torch.tensor or ndarray
-            Standard deviation of disturbance
+
 
         Returns
         -------
@@ -58,12 +55,10 @@ class CBFQPLayer:
         if expand_dims:
             action_batch = action_batch.unsqueeze(0)
             state_batch = state_batch.unsqueeze(0)
-            mean_pred_batch = mean_pred_batch.unsqueeze(0)
-            sigma_batch = sigma_batch.unsqueeze(0)
+           
 
         start_time = time()
-        Ps, qs, Gs, hs = self.get_cbf_qp_constraints(state_batch, other_state_batch, action_batch, mean_pred_batch,
-                                                     sigma_batch)
+        Ps, qs, Gs, hs = self.get_cbf_qp_constraints(state_batch, other_state_batch, action_batch)
         build_qp_time = time()
         safe_action_batch = self.solve_qp(Ps, qs, Gs, hs)
         # prCyan('Time to get constraints = {} - Time to solve QP = {} - time per qp = {} - batch_size = {} - device = {}'.format(build_qp_time - start_time, time() - build_qp_time, (time() - build_qp_time) / safe_action_batch.shape[0], Ps.shape[0], Ps.device))
@@ -141,8 +136,7 @@ class CBFQPLayer:
             raise Exception('QP Failed to solve')
         return result
 
-    def get_cbf_qp_constraints(self, state_batch, other_state_batch, action_batch, mean_pred_batch=None,
-                               sigma_pred_batch=None):
+    def get_cbf_qp_constraints(self, state_batch, other_state_batch, action_batch):
         """Build up matrices required to solve qp
         Program specifically solves:
             minimize_{u,eps} 0.5 * u^T P u + q^T u
@@ -166,10 +160,6 @@ class CBFQPLayer:
             current state (check dynamics.py for details on each dynamics' specifics)
         action_batch : torch.tensor
             Nominal control input.
-        mean_pred_batch : torch.tensor
-            mean disturbance prediction state, dimensions (n_s, dim_u)
-        sigma_pred_batch : torch.tensor
-            standard deviation in additive disturbance after undergoing the output dynamics.
         gamma_b : float, optional
             CBF parameter for the class-Kappa function
 
@@ -185,9 +175,7 @@ class CBFQPLayer:
             Inequality constraint vector (G[u,eps] <= h) of size (num_constraints,)
         """
 
-        # assert len(state_batch.shape) == 2 and len(action_batch.shape) == 2 and len(mean_pred_batch.shape) == 2 and len(
-        #     sigma_pred_batch.shape) == 2, print(state_batch.shape, action_batch.shape, mean_pred_batch.shape,
-        #                                         sigma_pred_batch.shape)
+
 
         batch_size = state_batch.shape[0]
         gamma_b = self.gamma_b
@@ -196,8 +184,7 @@ class CBFQPLayer:
         state_batch = torch.unsqueeze(state_batch, -1)
         other_state_batch = torch.unsqueeze(other_state_batch, -1)
         action_batch = torch.unsqueeze(action_batch, -1)
-        # mean_pred_batch = torch.unsqueeze(mean_pred_batch, -1)
-        # sigma_pred_batch = torch.unsqueeze(sigma_pred_batch, -1)
+
 
         num_cbfs = self.num_cbfs
         hazards_radius = self.env.hazards_radius
@@ -205,7 +192,7 @@ class CBFQPLayer:
         collision_radius = 1.1 * hazards_radius  # add a little buffer
         l_p = self.l_p
 
-        thetas = state_batch[:, 2, :].squeeze(-1)  # shape:([256])
+        thetas = state_batch[:, 2, :].squeeze(-1)  # shape:([batch])
         c_thetas = torch.cos(thetas)
         s_thetas = torch.sin(thetas)
 

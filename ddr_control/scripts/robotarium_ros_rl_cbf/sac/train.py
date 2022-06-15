@@ -32,7 +32,7 @@ def train(agent, env, args, experiment=None, index=0):
         states = env.reset(False)
         obs,other_s = env.get_obs(index)
         actions = np.zeros((N, 2))
-        actions[:, 0] = 0.15  # 线速度恒定
+        actions[:, 0] = 0.2  # 线速度恒定
         while not done:
             start = time.time()
             if episode_steps % 10 == 0:

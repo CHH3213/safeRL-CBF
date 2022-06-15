@@ -95,7 +95,7 @@ if __name__ == "__main__":
     parser.add_argument('--time_delay', action="store_true", help='set the time delaym default:0.')
     parser.add_argument('--disturbance', action="store_true", help='Should the disturbance be added.')
     parser.add_argument('--ros_env', action="store_true", help='Should the ros gazebo environment be used.')
-    parser.add_argument("--agent_number", default=10, type=int, help ="number of agents") # number of agents
+    parser.add_argument("--agent_number", default=3, type=int, help ="number of agents") # number of agents
 
 
     args = parser.parse_args()
@@ -105,9 +105,9 @@ if __name__ == "__main__":
     if args.mode == 'train':
         args.output = get_output_folder(args.output, args.env_name)
     if args.resume == 'default':
-        args.resume = os.getcwd() + '/output/{}-run0'.format(args.env_name)
+        args.resume =  './sac/output/{}-run0'.format(args.env_name)
     elif args.resume.isnumeric():
-        args.resume = os.getcwd() + '/output/{}-run{}'.format(args.env_name, args.resume)
+        args.resume =  './sac/output/{}-run{}'.format(args.env_name, args.resume)
 
     # if args.cuda:
     #     torch.cuda.set_device(args.device_num)

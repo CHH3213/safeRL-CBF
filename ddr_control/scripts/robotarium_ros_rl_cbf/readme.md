@@ -5,7 +5,7 @@
 ### 训练时运行
 
 ```shell
- python main_td3.py --mode train --cuda --device_num 0 --max_episodes 3500 --model_number 001 --use_cbf --log_comet  
+ python main_td3.py --mode train --cuda --device_num 0 --max_episodes 1000 --model_number 1 --use_cbf --log_comet  
 ```
 
 ### 测试：
@@ -31,7 +31,7 @@ python main_td3.py --mode test  --seed 133 --cuda --device_num 3 --model_number 
 ### 训练时运行
 
 ```shell
-python main_sac.py --cuda --device_num 0 --use_cbf  --eval --max_episodes 1000 --log_comet   
+python main_sac.py --cuda --device_num 1 --use_cbf  --eval --max_episodes 1000 --log_comet   
 ```
 
 > --use_cbf 为使用cbf；若不使用cbf，则不带这个参数即可。
@@ -45,24 +45,24 @@ python main_sac.py --cuda --device_num 0 --use_cbf  --eval --max_episodes 1000 -
 ### 测试时
 
 ```shell
-python main_sac.py --cuda --use_cbf --seed 12345 --mode test --resume ./output/name  --visualize
+python main_sac.py --cuda --use_cbf --seed 12345 --mode test --resume ./sac/output/name  --visualize
 ```
 
 如：
 
 ```shell
-python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf  --mode test --resume ./output/Robotarium-run23  --visualize
+python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf  --mode test --resume ./sac/output/Robotarium-run23  --visualize
 ```
 
 - 有延迟时
 
     ```shell
-    python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf --time_delay --mode test --resume ./output/Robotarium-run23  --visualize
+    python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf --time_delay --mode test --resume ./sac/output/Robotarium-run23  --visualize
     ```
 
 - 有干扰时
     ```shell
-    python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf --disturbance --mode test --resume ./output/Robotarium-run23  --visualize
+    python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf --disturbance --mode test --resume ./sac/output/Robotarium-run23  --visualize
     ```
 
 
@@ -71,5 +71,3 @@ python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf  --mode test --r
     python main_sac.py --cuda --device_num 1 --seed 12345 --use_cbf --disturbance --time_delay  --mode test --resume ./output/Robotarium-run23  --visualize
     ```
 
-
-最好的效果是Robotarium-run23
