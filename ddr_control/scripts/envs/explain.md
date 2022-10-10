@@ -20,9 +20,13 @@
 
 ### ros_robotarium_env.py
 
-是clf-cbf-mpc代码的ros运行环境
+是clf-cbf-mpc代码的ros运行环境,
+related environment: robotarium.world
+related launch file:robotarium.launch
 
 ### rl_ros_robotarium_env.py
 
 是ros_rl_cbf代码的ros运行环境
+related environment: robotarium_ros_rl.world
+related launch file:robotarium_ros_rl.launch
 
