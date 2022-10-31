@@ -8,14 +8,14 @@ from qpth.qp import QPFunction
 
 class CBFQPLayer:
 
-    def __init__(self, env, args, gamma_b=100, k_d=1.5, l_p=0.03):
+    def __init__(self, env, args, gamma=100, k_d=1.5, l_p=0.03):
         """Constructor of CBFLayer.
 
         Parameters
         ----------
         env : gym.env
             Gym environment.
-        gamma_b : float, optional
+        gamma : float, optional
             gamma of control barrier condition.
         """
 
@@ -23,9 +23,8 @@ class CBFQPLayer:
 
         self.env = env
         self.u_min, self.u_max = self.get_control_bounds()
-        self.gamma_b = gamma_b
+        self.gamma = gamma
 
-        # todo: env中要有agent_number属性
         self.num_cbfs = len(env.hazards_locations) + env.agent_number - 1  ## number of cbf+ number of other agents + number of obstacles
         self.k_d = k_d
         self.l_p = l_p
@@ -70,7 +69,7 @@ class CBFQPLayer:
         return final_action if not expand_dims else final_action.squeeze(0)
 
     def solve_qp(self, Ps: torch.Tensor, qs: torch.Tensor, Gs: torch.Tensor, hs: torch.Tensor):
-        """Solves:
+        """求解qp:
             minimize_{u,eps} 0.5 * u^T P u + q^T u
                 subject to G[u,eps]^T <= h
 
@@ -139,10 +138,10 @@ class CBFQPLayer:
             subject to G[u,eps]^T <= h
 
         Each control barrier condition is of the form:
-            dh/dx^T (f_out + g_out u) >= -gamma^b h_out^3 
+            dh/dx^T (f_out + g_out u) + gamma h_out^3 > 0 
 
-        state = [x y θ v ω]
-        state_dot = [v*cos(θ) v*sin(θ) omega ω u^v u^ω]
+        需要的state = [x y θ ]
+        state_dot = [v*cos(θ) v*sin(θ) omega ]
 
         Quick Note on batch matrix multiplication for matrices A and B:
             - Batch size should be first dim
@@ -152,10 +151,10 @@ class CBFQPLayer:
         Parameters
         ----------
         state_batch : torch.tensor
-            current state (check dynamics.py for details on each dynamics' specifics)
+            current state 
         action_batch : torch.tensor
             Nominal control input.
-        gamma_b : float, optional
+        gamma : float, optional
             CBF parameter for the class-Kappa function
 
         Returns
@@ -173,7 +172,7 @@ class CBFQPLayer:
 
 
         batch_size = state_batch.shape[0]
-        gamma_b = self.gamma_b
+        gamma = self.gamma
 
         # Expand dims shape:[batch_size,7,1]
         state_batch = torch.unsqueeze(state_batch, -1)
@@ -196,7 +195,7 @@ class CBFQPLayer:
         ps[:, 0] = state_batch[:, 0, :].squeeze(-1) + l_p * c_thetas
         ps[:, 1] = state_batch[:, 1, :].squeeze(-1) + l_p * s_thetas
 
-        # p_dot(x) = f_p(x) + g_p(x)u  where f_p(x) = 0,  g_p(x) = RL 
+        # p_dot(x) = f_p(x) + g_p(x)u  其中 f_p(x) = 0,  g_p(x) = RL 
 
         # f_p(x) = [0,...,0]^T
         f_ps = torch.zeros((batch_size, 2, 1)).to(self.device)
@@ -210,7 +209,7 @@ class CBFQPLayer:
         Ls = torch.zeros((batch_size, 2, 2)).to(self.device)
         Ls[:, 0, 0] = 1
         Ls[:, 1, 1] = l_p
-        # bmm pytorch tensor相乘 p*m*n,p*n*l-->p*m*l
+        # bmm —— pytorch tensor相乘 p*m*n,p*n*l-->p*m*l
         g_ps = torch.bmm(Rs, Ls)  # (batch_size, 2, 2)  
 
 
@@ -236,8 +235,8 @@ class CBFQPLayer:
         # Add inequality constraints
         G[:, :num_cbfs, :dim_u] = -torch.bmm(dhdps, g_ps)  # h1^Tg(x)
         G[:, :num_cbfs, dim_u] = -1  # for slack
-        # h[:, :num_cbfs] = gamma_b * (hs ** 3) + (torch.bmm(dhdps, f_ps + mu_ps) - torch.bmm(torch.abs(dhdps), sigma_ps) + torch.bmm(torch.bmm(dhdps, g_ps), action_batch)).squeeze(-1)
-        h[:, :num_cbfs] = gamma_b * (torch.tanh(hs) ** 3) + (
+        # h[:, :num_cbfs] = gamma * (hs ** 3) + (torch.bmm(dhdps, f_ps + mu_ps) - torch.bmm(torch.abs(dhdps), sigma_ps) + torch.bmm(torch.bmm(dhdps, g_ps), action_batch)).squeeze(-1)
+        h[:, :num_cbfs] = gamma * (torch.tanh(hs) ** 3) + (
                 torch.bmm(dhdps, f_ps) + torch.bmm(torch.bmm(dhdps, g_ps), action_batch)).squeeze(-1)
         ineq_constraint_counter += num_cbfs
 

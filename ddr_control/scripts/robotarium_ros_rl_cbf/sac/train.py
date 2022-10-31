@@ -29,7 +29,7 @@ def train(agent, env, args, experiment=None, index=0):
         steps_o_state = []
         episode_steps = 0
         done = False
-        states = env.reset(False)
+        states = env.reset(args.render)
         obs,other_s = env.get_obs(index)
         actions = np.zeros((N, 2))
         actions[:, 0] = 0.2  # 线速度恒定
@@ -46,10 +46,7 @@ def train(agent, env, args, experiment=None, index=0):
                 # Number of updates per step in environment
                 for i in range(args.updates_per_step):
 
-                    critic_1_loss, critic_2_loss, policy_loss, ent_loss, alpha = agent.update_parameters(memory,
-                                                                                                         args.batch_size,
-                                                                                                         updates
-                                                                                                         )
+                    critic_1_loss, critic_2_loss, policy_loss, ent_loss, alpha = agent.update_parameters(memory, args.batch_size, updates )
 
                     if experiment:
                         experiment.log_metric('loss/critic_1', critic_1_loss, updates)
@@ -112,10 +109,7 @@ def train(agent, env, args, experiment=None, index=0):
         if experiment:
             # Comet.ml logging
             experiment.log_metric('reward/train', episode_reward, step=i_episode)
-        prGreen("Episode: {}, total numsteps: {}, episode steps: {}, reward: {}".format(i_episode, total_numsteps,
-                                                                                    episode_steps,
-                                                                                    round(episode_reward, 2)
-                                                                                    ))
+        prGreen("Episode: {}, total numsteps: {}, episode steps: {}, reward: {}".format(i_episode, total_numsteps, episode_steps, round(episode_reward, 2)))
 
         # Evaluation
         if (i_episode + 1) % 10 == 0 and args.eval is True:
@@ -129,8 +123,7 @@ def train(agent, env, args, experiment=None, index=0):
                 done = False
                 while not done:
                     start = time.time()
-                    action = agent.select_action(obs,other_s,
-                                                 evaluate=True)  # Sample action from policy
+                    action = agent.select_action(obs,other_s, evaluate=True)  # Sample action from policy
 
                     all_states_ = np.vstack((states, env.hazards_locations))
                     for idx in range(0, N):

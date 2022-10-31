@@ -70,7 +70,7 @@ def train(env, args, policy, file_name):
         steps_action = []
         steps_state = []
 
-        states = env.reset(False)
+        states = env.reset(args.render)
         obs,other_s = env.get_obs(index)
         actions = np.zeros((N, 2))
         actions[:, 0] = 0.2  # 线速度恒定
@@ -79,7 +79,7 @@ def train(env, args, policy, file_name):
             t += 1
             episode_timesteps += 1
 
-            action = (policy.select_action(obs,other_s)+ np.random.normal(0, max_action * args.expl_noise, size=action_dim)
+            action = (policy.select_action(obs, other_s)+ np.random.normal(0, max_action * args.expl_noise, size=action_dim)
             ).clip(-max_action, max_action)
             # print(action)
             for idx in range(0, N):
@@ -88,7 +88,6 @@ def train(env, args, policy, file_name):
 
                 actions[idx, 1] = simple_pursuit(states[idx], states[index])
                 # actions[idx, 1] = np.random.uniform(-1,1)
-
 
             safe_a = action            
             actions[index] = safe_a
@@ -122,8 +121,7 @@ def train(env, args, policy, file_name):
             experiment.log_metric('reward/train', episode_reward, step=i_episode)
 
         # +1 to account for 0 indexing. +0 on ep_timesteps since it will increment +1 even if done=True
-        print(
-            f"Total Episode: {i_episode}  Episode T: {episode_timesteps} Reward: {episode_reward:.3f}")
+        print(f"Total Episode: {i_episode}  Episode T: {episode_timesteps} Reward: {episode_reward:.3f}")
 
         reward_st = np.append(reward_st, episode_reward)
 

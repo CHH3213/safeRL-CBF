@@ -18,7 +18,7 @@ class RobotariumEnv(core.Env):
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
         self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(2,))
         self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(7,))
-        # self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(11,))
+        # self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(15,))
         # 障碍物位置
         self.hazards_locations = np.array([[1, 1., 0.],[-1.5, 0., 0.], [1.5, 0., 0.], [0.0, 1.5, 0.], [0.0, -1.5, 0.]])
         self.hazards_radius = 0.25  # 障碍物半径
@@ -202,10 +202,12 @@ class RobotariumEnv(core.Env):
             if self.goal_met(index):
                 print('Reach goal successfully!')
                 info['goal_met'] = True
-                reward += 500
+                reward += 1000
                 done = True
             else:
-                reward -= 0.1 * dist_goal
+                # reward -= 0.1 * dist_goal
+
+                reward += 10 * (self.last_goal_dist - dist_goal)
 
         self.last_goal_dist = dist_goal
 
@@ -352,6 +354,22 @@ class RobotariumEnv(core.Env):
         return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
                          goal_compass[1], np.exp(-goal_dist)]), other_s
 
+        # temp_obs = goal_compass[0:2]
+        # temp_obs = np.concatenate((temp_obs, [np.exp(-goal_dist)]))  # 添加一维
+
+        # dist_list = []
+        # for o_s in other_agent_s:
+        #     agent_dist = np.linalg.norm(o_s[0:2] - self_state[:2])
+        #     dist_list.append(agent_dist)
+        # idx = np.argmin(dist_list)
+        # rel_o_s = other_agent_s[idx, 0:2] - self_state[:2]
+
+        # temp_obs = np.concatenate((temp_obs, rel_o_s))
+
+        # for o_s in self.hazards_locations:
+        #     temp_obs = np.concatenate((temp_obs, o_s[0:2] - self_state[:2]))
+        # # print(np.shape(temp_obs))
+        # return temp_obs,other_s
 
     def obs_compass(self, index):
         """

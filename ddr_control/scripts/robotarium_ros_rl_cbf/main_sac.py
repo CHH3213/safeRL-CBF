@@ -34,11 +34,7 @@ if __name__ == "__main__":
     parser.add_argument('--comet_workspace', default='chh3213', help='Comet workspace')
     # SAC Args
     parser.add_argument('--mode', default='train', type=str, help='support option: train/test')
-    ## CBF
-    parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
-    parser.add_argument('--k_d', default=1.5, type=float)
-    parser.add_argument('--gamma_b', default=500, type=float)
-    parser.add_argument('--l_p', default=0.05, type=float, help="Look-ahead distance for unicycle dynamics output.")
+
 
 
     parser.add_argument('--restore', type=bool, default=False, help='Should the compensator be used.')
@@ -97,6 +93,11 @@ if __name__ == "__main__":
     parser.add_argument('--ros_env', action="store_true", help='Should the ros gazebo environment be used.')
     parser.add_argument("--agent_number", default=3, type=int, help ="number of agents") # number of agents
 
+    ## CBF
+    parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
+    parser.add_argument('--k_d', default=1.5, type=float)
+    parser.add_argument('--gamma_b', default=200, type=float, help="gamma of control barrier condition")
+    parser.add_argument('--l_p', default=0.15, type=float, help="Look-ahead distance for robotarium output.")
 
     args = parser.parse_args()
 
