@@ -16,22 +16,22 @@ class CBFQPLayer:
         env : gym.env
             Gym environment.
         gamma_b : float, optional
-            gamma of control barrier certificate.
+            gamma of control barrier condition.
         """
 
-        self.device = torch.device("cuda" if args.cuda else "cpu")
+        self.device = torch.device(f"cuda:{args.device_num}" if args.cuda else "cpu")
 
         self.env = env
         self.u_min, self.u_max = self.get_control_bounds()
         self.gamma_b = gamma_b
 
         # todo: env中要有agent_number属性
-        self.num_cbfs = len(env.hazards_locations) + env.agent_number - 1  ## cbf的数量为其他智能体数量+障碍物数量
+        self.num_cbfs = len(env.hazards_locations) + env.agent_number - 1  ## number of cbf+ number of other agents + number of obstacles
         self.k_d = k_d
         self.l_p = l_p
 
         self.action_dim = env.action_space.shape[0]
-        self.num_ineq_constraints = self.num_cbfs + 2 * self.action_dim  # 不等式约束包括cbf约束和控制输入约束
+        self.num_ineq_constraints = self.num_cbfs + 2 * self.action_dim  # all ineq_constraints includes cbf constraints and control input constraints
 
     def get_safe_action(self, state_batch, other_state_batch, action_batch):
         """
@@ -41,7 +41,6 @@ class CBFQPLayer:
         state_batch : torch.tensor or ndarray
         other_state_batch: torch.tensor or ndarray  为其他智能体与障碍物的位置状态，不包括角度，即shape为[batch_size,2]
         action_batch : torch.tensor or ndarray
-            State batch
 
 
         Returns
@@ -95,8 +94,7 @@ class CBFQPLayer:
         Ghs_norm = torch.max(torch.abs(Ghs), dim=2, keepdim=True)[0]
         Gs /= Ghs_norm
         hs = hs / Ghs_norm.squeeze(-1)
-        sol = self.cbf_layer(Ps, qs, Gs, hs,
-                             solver_args={"check_Q_spd": False, "maxIter": 10000, "notImprovedLim": 10, "eps": 1e-4})
+        sol = self.cbf_layer(Ps, qs, Gs, hs, solver_args={"check_Q_spd": False, "maxIter": 10000, "notImprovedLim": 10, "eps": 1e-4})
         safe_action_batch = sol[:, :-1]
         return safe_action_batch
 
@@ -128,8 +126,7 @@ class CBFQPLayer:
             As = torch.Tensor().to(self.device).double()
             bs = torch.Tensor().to(self.device).double()
 
-        result = QPFunction(verbose=0, **solver_args)(Qs.double(), ps.double(), Gs.double(), hs.double(), As,
-                                                      bs).float()
+        result = QPFunction(verbose=0, **solver_args)(Qs.double(), ps.double(), Gs.double(), hs.double(), As, bs).float()
 
         if torch.any(torch.isnan(result)):
             prRed('QP Failed to solve - result is nan == {}!'.format(torch.any(torch.isnan(result))))
@@ -137,17 +134,15 @@ class CBFQPLayer:
         return result
 
     def get_cbf_qp_constraints(self, state_batch, other_state_batch, action_batch):
-        """Build up matrices required to solve qp
-        Program specifically solves:
-            minimize_{u,eps} 0.5 * u^T P u + q^T u
-                subject to G[u,eps]^T <= h
+        """
+        minimize_{u,eps} 0.5 * u^T P u + q^T u
+            subject to G[u,eps]^T <= h
 
-        Each control barrier certificate is of the form:
-            dh/dx^T (f_out + g_out u) >= -gamma^b h_out^3 where out here is an output of the state.
+        Each control barrier condition is of the form:
+            dh/dx^T (f_out + g_out u) >= -gamma^b h_out^3 
 
-        In the case of SafetyGym_point dynamics:
         state = [x y θ v ω]
-        state_d = [v*cos(θ) v*sin(θ) omega ω u^v u^ω]
+        state_dot = [v*cos(θ) v*sin(θ) omega ω u^v u^ω]
 
         Quick Note on batch matrix multiplication for matrices A and B:
             - Batch size should be first dim
@@ -234,8 +229,7 @@ class CBFQPLayer:
         num_constraints = num_cbfs + 2 * dim_u  # each cbf is a constraint, and we need to add actuator constraints (dim_u of them)
 
         # Inequality constraints (G[u, eps] <= h)
-        G = torch.zeros((batch_size, num_constraints, dim_u + 1)).to(
-            self.device)  # the extra variable is for epsilon (to make sure qp is always feasible)
+        G = torch.zeros((batch_size, num_constraints, dim_u + 1)).to(self.device)  
         h = torch.zeros((batch_size, num_constraints)).to(self.device)
         ineq_constraint_counter = 0
 
