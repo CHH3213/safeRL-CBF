@@ -17,6 +17,8 @@ class CBFQPLayer:
             Gym environment.
         gamma : float, optional
             gamma of control barrier condition.
+        k_d : float, optional
+            confidence parameter desired (2.0 corresponds to ~95% for example).
         """
 
         self.device = torch.device(f"cuda:{args.device_num}" if args.cuda else "cpu")

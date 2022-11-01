@@ -54,7 +54,7 @@ class RobotariumEnv(core.Env):
         # Example when using discrete actions:
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
         self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(2,))
-        self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(7,))
+        self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(6,))
 
         # Initialize Env
         self.episode_step = 0
@@ -275,14 +275,19 @@ class RobotariumEnv(core.Env):
         observation : ndarray
           Observation: [pos_x, pos_y, cos(theta), sin(theta), xdir2goal, ydir2goal, exp(-dist2goal)]
         """
+        other_agent_s = np.delete(self.states, index, 0)  # 除去自身
+        other_s = np.vstack((other_agent_s, self.hazards_locations))
+        other_s = np.delete(other_s, 2, 1)  # 除去欧拉角
         self_state = self.states[index]
         rel_loc = self.goal_pos[index] - self_state[:2]
         goal_dist = np.linalg.norm(rel_loc)
         goal_compass = self.obs_compass(index)  # compass to the goal
 
-        return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
-                         goal_compass[1], np.exp(-goal_dist)])
-
+        # return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
+        #                  goal_compass[1], np.exp(-goal_dist)])
+        # dim:6
+        return np.array([self_state[0], self_state[1], self_state[2], goal_compass[0],
+                         goal_compass[1], np.exp(-goal_dist)]), other_s
     def obs_compass(self, index):
         """
         Return a robot-centric compass observation of a list of positions.

@@ -58,9 +58,9 @@ if __name__ == "__main__":
     parser.add_argument('--time_delay', action="store_true", help='set the time delaym default:0.')
     parser.add_argument('--disturbance', action="store_true", help='Should the disturbance be added.')
     parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
-    parser.add_argument('--k_d', default=3, type=float)
+    parser.add_argument('--k_d', default=2, type=float)
     parser.add_argument('--gamma_b', default=200, type=float, help="gamma of control barrier condition")
-    parser.add_argument('--l_p', default=0.15, type=float, help="Look-ahead distance for robotarium output.")
+    parser.add_argument('--l_p', default=0.3, type=float, help="Look-ahead distance for robotarium output.")
     parser.add_argument('--ros_env', action="store_true", help='Should the ros gazebo environment be used.')
 
     args = parser.parse_args()

@@ -73,7 +73,7 @@ def train(env, args, policy, file_name):
         states = env.reset(args.render)
         obs,other_s = env.get_obs(index)
         actions = np.zeros((N, 2))
-        actions[:, 0] = 0.2  # 线速度恒定
+        actions[:, 0] = 0.15  # 线速度恒定
         done = False
         while not done:
             t += 1
@@ -86,8 +86,8 @@ def train(env, args, policy, file_name):
                 if idx == index:
                     continue
 
-                actions[idx, 1] = simple_pursuit(states[idx], states[index])
-                # actions[idx, 1] = np.random.uniform(-1,1)
+                # actions[idx, 1] = simple_pursuit(states[idx], states[index])
+                actions[idx, 1] = np.random.uniform(-1,1)
 
             safe_a = action            
             actions[index] = safe_a

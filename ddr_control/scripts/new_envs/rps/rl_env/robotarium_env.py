@@ -17,7 +17,7 @@ class RobotariumEnv(core.Env):
         # Example when using discrete actions:
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
         self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(2,))
-        self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(7,))
+        self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(6,))
         # self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(15,))
         # 障碍物位置
         self.hazards_locations = np.array([[1, 1., 0.],[-1.5, 0., 0.], [1.5, 0., 0.], [0.0, 1.5, 0.], [0.0, -1.5, 0.]])
@@ -351,9 +351,11 @@ class RobotariumEnv(core.Env):
         goal_dist = np.linalg.norm(rel_loc)
         goal_compass = self.obs_compass(index)  # compass to the goal
 
-        return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
+        # return np.array([self_state[0], self_state[1], np.cos(self_state[2]), np.sin(self_state[2]), goal_compass[0],
+        #                  goal_compass[1], np.exp(-goal_dist)]), other_s
+        # dim:6
+        return np.array([self_state[0], self_state[1], self_state[2], goal_compass[0],
                          goal_compass[1], np.exp(-goal_dist)]), other_s
-
         # temp_obs = goal_compass[0:2]
         # temp_obs = np.concatenate((temp_obs, [np.exp(-goal_dist)]))  # 添加一维
 

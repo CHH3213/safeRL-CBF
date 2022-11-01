@@ -145,11 +145,12 @@ class TD3(object):
         if expand_dims:
             obs = np.expand_dims(obs, 0)
 
-        theta = np.arctan2(obs[:, 3], obs[:, 2])
         state_batch = np.zeros((obs.shape[0], 3))
         state_batch[:, 0] = obs[:, 0]
         state_batch[:, 1] = obs[:, 1]
-        state_batch[:, 2] = theta
+        # theta = np.arctan2(obs[:, 3], obs[:, 2])
+        # state_batch[:, 2] = theta
+        state_batch[:, 2] = obs[:, 2]
        
 
         if expand_dims:

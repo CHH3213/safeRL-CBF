@@ -105,7 +105,7 @@ def eval(env, args, policy, file_name, index_list=[0]):
                 actions[idx, 1] = simple_pursuit(states[idx], pursuit_target)
                 
                 # actions[idx, 1] = CBF([actions[idx, 1]], all_states, idx)
-                actions[idx, 0] = 0.15*0.88
+                actions[idx, 0] = 0.15
                 # actions[idx, 1] = np.random.uniform(-1, 1)
 
                 
@@ -120,9 +120,7 @@ def eval(env, args, policy, file_name, index_list=[0]):
                 #     all_states_ = np.vstack((states, env.nearest_obstacle(index)))
                 
                 safe_a = action_list[i]
-                # add_rand = np.random.normal(0, 1 ** 0.5, safe_a.shape).clip(-1,1)#创建一个均值为mean，方差为var呈高斯分布
-                add_rand = 0
-                safe_a = safe_a + add_rand  
+                safe_a = safe_a   
                 # if safe_a != action_list[i]:
                 #     print(all_states_) 
                 #     #  [-0.70368036 -0.16339836  1.07789404]
