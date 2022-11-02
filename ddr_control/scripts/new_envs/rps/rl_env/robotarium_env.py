@@ -241,8 +241,10 @@ class RobotariumEnv(core.Env):
             dist = np.linalg.norm(o_s[0:2] - self_state[:2])
             dist_list.append(dist)
         ind = np.argmin(dist_list)
-
-        return np.vstack((self_state, other_agent_s[ind]))
+        
+        # return np.vstack((self_state, other_agent_s[ind]))
+        ind2 = np.argsort(dist_list)[1]
+        return np.vstack((other_agent_s[ind], other_agent_s[ind2]))
 
     def goal_met(self, index):
         """Return true if the current goal is met this step
@@ -343,9 +345,10 @@ class RobotariumEnv(core.Env):
         observation : ndarray
           Observation: [pos_x, pos_y, cos(theta), sin(theta), xdir2goal, ydir2goal, exp(-dist2goal)]
         """
-        other_agent_s = np.delete(self.states, index, 0)  # 除去自身
-        other_s = np.vstack((other_agent_s, self.hazards_locations))
-        other_s = np.delete(other_s, 2, 1)  # 除去欧拉角
+        # other_agent_s = np.delete(self.states, index, 0)  # 除去自身
+        # other_s = np.vstack((other_agent_s, self.hazards_locations))
+        other_s = np.vstack((self.nearest_agent(index), self.nearest_obstacle(index)))
+        # other_s = np.delete(other_s, 2, 1)  # 除去欧拉角
         self_state = self.states[index]
         rel_loc = self.goal_pos[index] - self_state[:2]
         goal_dist = np.linalg.norm(rel_loc)
