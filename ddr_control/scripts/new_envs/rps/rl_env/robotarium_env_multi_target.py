@@ -246,8 +246,8 @@ class RobotariumEnv(core.Env):
                 reward += 1000
                 done = True
             else:
-                # reward -= 0.1 * dist_goal
-                reward += 10 * (self.last_goal_dist - dist_goal)
+                reward -= 0.1 * dist_goal
+                # reward += 10 * (self.last_goal_dist - dist_goal)
 
         self.last_goal_dist = dist_goal
 

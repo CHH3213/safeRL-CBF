@@ -175,7 +175,10 @@ class TD3(object):
         state_batch = self.get_state(obs_batch)
         other_state_batch = other_state_batch if torch.is_tensor(other_state_batch) else to_tensor(other_state_batch,dtype=state_batch.dtype,device=state_batch.device)
         safe_action_batch = self.cbf_layer.get_safe_action(state_batch, other_state_batch, action_batch)
-
+        # print("shapoe",state_batch.shape[0] )
+        # print("state_batch",np.shape(state_batch))
+        # print("other_state_batch",np.shape(other_state_batch))
+        # print("action_batch",np.shape(action_batch))
         return safe_action_batch
 
 
