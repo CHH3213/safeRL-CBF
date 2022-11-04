@@ -93,10 +93,16 @@ class CBFQPLayer:
 
         Ghs = torch.cat((Gs, hs.unsqueeze(2)), -1)
         Ghs_norm = torch.max(torch.abs(Ghs), dim=2, keepdim=True)[0]
+        # print(np.shape(Ghs))
+        # print(np.shape(Ghs_norm))
         Gs /= Ghs_norm
         hs = hs / Ghs_norm.squeeze(-1)
+        # print(np.shape(hs))
         sol = self.cbf_layer(Ps, qs, Gs, hs, solver_args={"check_Q_spd": False, "maxIter": 10000, "notImprovedLim": 10, "eps": 1e-4})
+        # print(np.shape(sol))
         safe_action_batch = sol[:, :-1]
+        # print(safe_action_batch)
+        # print(np.shape(safe_action_batch))
         return safe_action_batch
 
     def cbf_layer(self, Qs, ps, Gs, hs, As=None, bs=None, solver_args=None):
@@ -181,7 +187,6 @@ class CBFQPLayer:
         other_state_batch = torch.unsqueeze(other_state_batch, -1)
         action_batch = torch.unsqueeze(action_batch, -1)
 
-
         num_cbfs = self.num_cbfs
         hazards_radius = self.env.hazards_radius
         # hazards_locations = to_tensor(self.env.hazards_locations, torch.FloatTensor, self.device)
@@ -191,7 +196,7 @@ class CBFQPLayer:
         thetas = state_batch[:, 2, :].squeeze(-1)  # shape:([batch])
         c_thetas = torch.cos(thetas)
         s_thetas = torch.sin(thetas)
-
+        # print(np.shape(c_thetas))
         # p(x): lookahead output (batch_size, 2)
         ps = torch.zeros((batch_size, 2)).to(self.device)
         ps[:, 0] = state_batch[:, 0, :].squeeze(-1) + l_p * c_thetas
@@ -262,7 +267,10 @@ class CBFQPLayer:
                 G[:, ineq_constraint_counter, c] = -1
                 h[:, ineq_constraint_counter] = -self.u_min[c] + action_batch[:, c].squeeze(-1)
                 ineq_constraint_counter += 1
-
+        # print(np.shape(P))
+        # print(np.shape(q))
+        # print(np.shape(G))
+        # print(np.shape(h))
         return P, q, G, h
 
     def get_control_bounds(self):
