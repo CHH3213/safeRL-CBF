@@ -5,7 +5,7 @@ from sac.utils import soft_update, hard_update
 from sac.model import GaussianPolicy, QNetwork, DeterministicPolicy
 import numpy as np
 from sac.utils import to_tensor,to_numpy
-from diff_cbf_qp import CBFQPLayer
+from cbf_qp_layer import CBFQPLayer
 
 
 class SAC(object):
@@ -48,7 +48,7 @@ class SAC(object):
 
         # CBF layer
         self.env = env
-        self.cbf_layer = CBFQPLayer(env, args, args.gamma_b, args.k_d, args.l_p)
+        self.cbf_layer = CBFQPLayer(env, args, args.Vp,args.Ve, args.r, args.K1, args.K2)
         self.use_cbf = args.use_cbf
 
 

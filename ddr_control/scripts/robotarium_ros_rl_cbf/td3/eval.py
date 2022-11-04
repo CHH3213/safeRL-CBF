@@ -136,7 +136,7 @@ def eval(env, args, policy, file_name, index_list=[0]):
                         safe_a = safe_a+noise
                         # print(safe_a)
                         
-                actions[index] = safe_a
+                actions[index,1] = safe_a
                     
 
             

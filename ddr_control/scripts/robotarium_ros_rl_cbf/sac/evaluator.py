@@ -105,7 +105,7 @@ class Evaluator(object):
                         # safe_a = (safe_a+noise).clip(-2.5,2.5)
                         safe_a = safe_a+noise
 
-                    actions[index] = safe_a
+                    actions[index,1] = safe_a
                 temp = time.time()
                 next_states = env.step(actions)
                 # print('step_time', time.time() - temp)

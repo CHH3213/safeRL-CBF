@@ -67,7 +67,7 @@ def train(agent, env, args, experiment=None, index=0):
 
             safe_a = action
             # print(safe_a)
-            actions[index] = safe_a
+            actions[index,1] = safe_a
 
             next_states = env.step(actions)
             reward, done, info = env._reward_done(index)

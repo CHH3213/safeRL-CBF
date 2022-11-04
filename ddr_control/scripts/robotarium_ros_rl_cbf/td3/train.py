@@ -90,7 +90,7 @@ def train(env, args, policy, file_name):
                 actions[idx, 1] = np.random.uniform(-1,1)
 
             safe_a = action            
-            actions[index] = safe_a
+            actions[index,1] = safe_a
             # Perform action
             next_states = env.step(actions)
             reward, done, info = env._reward_done(index)

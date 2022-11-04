@@ -54,13 +54,15 @@ if __name__ == "__main__":
     parser.add_argument('--restore',  action="store_true", help='Should the compensator be used.')
     
     
-    parser.add_argument("--agent_number", default=3, type=int, help ="number of agents") # number of agents
+    parser.add_argument("--agent_number", default=3, type=int, help ="number of agents.") # number of agents
     parser.add_argument('--time_delay', action="store_true", help='set the time delaym default:0.')
     parser.add_argument('--disturbance', action="store_true", help='Should the disturbance be added.')
     parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
-    parser.add_argument('--k_d', default=2, type=float)
-    parser.add_argument('--gamma_b', default=200, type=float, help="gamma of control barrier condition")
-    parser.add_argument('--l_p', default=0.3, type=float, help="Look-ahead distance for robotarium output.")
+    parser.add_argument('--Vp', default=1.2, type=float, help="pre-setting velocity of pursuer, not real velocity.")
+    parser.add_argument('--Ve', default=0.8, type=float, help="pre-setting velocity of evader, not real velocity.")
+    parser.add_argument('--r', default=0.4, type=float, help="safety critical distance.")
+    parser.add_argument('--K1', default=15, type=float, help="condition 1 of CBF.")
+    parser.add_argument('--K2', default=15, type=float, help="condition 2 of CBF.")
     parser.add_argument('--ros_env', action="store_true", help='Should the ros gazebo environment be used.')
 
     args = parser.parse_args()

@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from td3.model import Actor,Critic
 from td3.utils import to_tensor,to_numpy
-from diff_cbf_qp import CBFQPLayer
+from cbf_qp_layer import CBFQPLayer
 
 
 # Implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3)
@@ -49,21 +49,25 @@ class TD3(object):
 
         # CBF layer
         self.env = env
-        self.cbf_layer = CBFQPLayer(env, args, args.gamma_b, args.k_d, args.l_p)
+        self.cbf_layer = CBFQPLayer(env, args, args.Vp,args.Ve, args.r, args.K1, args.K2)
         self.use_cbf = args.use_cbf
 
     def select_action(self, state,other_state):
         state = to_tensor(state, torch.FloatTensor, self.device)
         other_state = to_tensor(other_state, torch.FloatTensor, self.device)
-        # print(np.shape(state_batch))
         expand_dim = len(state.shape) == 1
+        # print(np.shape(other_state))
         if expand_dim:
-                    state = state.unsqueeze(0)
+                state = state.unsqueeze(0)
+                other_state = other_state.unsqueeze(0)
+                
+        # print(np.shape(other_state))
         # action = self.actor(state).cpu().data.numpy().flatten()
         action = self.actor(state)
-        safe_action = self.get_safe_action(state, other_state, action)
+        if self.use_cbf:
+            safe_action = self.get_safe_action(state, other_state, action)
 
-        return safe_action.detach().cpu().numpy()[0] if expand_dim else action.detach().cpu().numpy()
+        return safe_action.detach().cpu().numpy()[0] if (expand_dim and self.use_cbf) else action.detach().cpu().numpy()
 
     def train(self, replay_buffer, batch_size):
         self.total_it += 1

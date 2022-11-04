@@ -19,8 +19,8 @@ class RobotariumEnv(core.Env):
         # Define action and observation space
         # They must be gym.spaces objects
         # Example when using discrete actions:
-        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(2,))
-        self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(2,))
+        self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(1,))
+        self.safe_action_space = spaces.Box(low=-2.5, high=2.5, shape=(1,))
         self.observation_space = spaces.Box(low=-np.inf, high=+np.inf, shape=(6,))
         self.hazards_radius = 0.25  # 障碍物半径
         # 最近的障碍物

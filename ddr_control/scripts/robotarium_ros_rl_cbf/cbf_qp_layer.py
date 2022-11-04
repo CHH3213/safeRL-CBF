@@ -64,8 +64,9 @@ class CBFQPLayer:
         if expand_dims:
             action_batch = action_batch.unsqueeze(0)
             state_batch = state_batch.unsqueeze(0)
+            other_state_batch = other_state_batch.unsqueeze(0)
            
-
+        # print("state_batch.shape",len(state_batch.shape))
         start_time = time()
         Ps, qs, Gs, hs = self.get_cbf_qp_constraints(state_batch, other_state_batch, action_batch)
         build_qp_time = time()
@@ -87,11 +88,11 @@ class CBFQPLayer:
         Parameters
         ----------
         Ps : torch.Tensor
-            (batch_size, dim_u+1, dim_u+1)
+            (batch_size, dim_u)
         qs : torch.Tensor
-            (batch_size, dim_u+1)
+            (batch_size, dim_u)
         Gs : torch.Tensor
-            (batch_size, num_ineq_constraints, dim_u+1)
+            (batch_size, num_ineq_constraints)
         hs : torch.Tensor
             (batch_size, num_ineq_constraints)
         Returns
@@ -99,13 +100,17 @@ class CBFQPLayer:
         safe_action_batch : torch.tensor
             The solution of the qp without the last dimension (the slack).
         """
+        # TODO: fix bug
+        # print(np.shape(qs))
+        # Ghs = torch.cat((Gs, hs.unsqueeze(2)), -1)
+        # Ghs_norm = torch.max(torch.abs(Ghs), dim=2, keepdim=True)[0]
+        # Gs /= Ghs_norm
+        # hs = hs / Ghs_norm.squeeze(-1)
 
-        Ghs = torch.cat((Gs, hs.unsqueeze(2)), -1)
-        Ghs_norm = torch.max(torch.abs(Ghs), dim=2, keepdim=True)[0]
-        Gs /= Ghs_norm
-        hs = hs / Ghs_norm.squeeze(-1)
         sol = self.cbf_layer(Ps, qs, Gs, hs, solver_args={"check_Q_spd": False, "maxIter": 10000, "notImprovedLim": 10, "eps": 1e-4})
         safe_action_batch = sol[:, :-1]
+        # print(safe_action_batch)
+        # print(np.shape(safe_action_batch))
         return safe_action_batch
 
     def cbf_layer(self, Qs, ps, Gs, hs, As=None, bs=None, solver_args=None):
@@ -128,6 +133,7 @@ class CBFQPLayer:
         result : torch.Tensor
             Result of QP
         """
+        # TODO: fix bug
 
         if solver_args is None:
             solver_args = {}
@@ -167,36 +173,38 @@ class CBFQPLayer:
             Inequality constraint vector (G[u,eps] <= h) of size (num_constraints,)
         
         """
+        # TODO: 检查P,Q,G,H的维度是否符合
         batch_size = state_batch.shape[0] 
         # state_batch = torch.unsqueeze(state_batch, -1) # self agent's state
         # other_state_batch = torch.unsqueeze(other_state_batch, -1)  # nearest two agents and nearest obstacle'state
         # action_batch = torch.unsqueeze(action_batch, -1)
-        num_cbfs = self.num_cbfs
+        num_cbfs = other_state_batch.shape[1]
 
-        dim_u = action_batch.shape[1]  # dimension of control inputs
+        # dim_u = action_batch.shape[1]  # dimension of control inputs
 
-        G = torch.zeros((batch_size, self.num_ineq_constraints, dim_u + 1)).to(self.device) 
+        G = torch.zeros((batch_size, self.num_ineq_constraints,1)).to(self.device) # G
         H = torch.zeros((batch_size, self.num_ineq_constraints)).to(self.device)
-        g, h = self._cbf_constraints(state_batch, other_state_batch, batch_size)
+        g, h = self._cbf_constraints(state_batch, other_state_batch, batch_size) # g:[batchsize,num_cbfs]
         ineq_constraint_counter = num_cbfs
 
-        G[:, :num_cbfs, :dim_u] = g
-        G[:, :num_cbfs, dim_u] = -1  # for slack
+        G[:, :num_cbfs,0] = g
+        # print(np.shape(g.unsqueeze(-1)))
 
         H[:, :num_cbfs] =h
         
-        for c in range(dim_u):
-            G[:, ineq_constraint_counter, c] = 1
-            H[:, ineq_constraint_counter] = self.u_max
-            ineq_constraint_counter +=1
-            G[:, ineq_constraint_counter, c] = -1
-            H[:, ineq_constraint_counter] = -self.u_min
-        P = torch.diag(torch.tensor([1.0])).repeat(batch_size, 1, 1).to(self.device)
+        G[:, ineq_constraint_counter,0] = 1
+        H[:, ineq_constraint_counter] = self.u_max
+        ineq_constraint_counter +=1
+        G[:, ineq_constraint_counter,0] = -1
+        H[:, ineq_constraint_counter] = -self.u_min
+        P = torch.diag(torch.tensor([1.0])).repeat(batch_size, 1).to(self.device)
         Q = -2*action_batch
+        # print(np.shape(G),np.shape(H))
 
         return P,Q,G,H
     
     def _cbf_constraints(self, state_batch, other_state_batch,batch_size):
+        # print(np.shape(other_state_batch))
         x_p = other_state_batch[:,:,0]
         y_p = other_state_batch[:,:,1]
         # P_p = other_state_batch[:,:,0:2]
@@ -210,23 +218,41 @@ class CBFQPLayer:
         theta_e = state_batch[:,2]
         cos_e = torch.cos(theta_e)
         sin_e = torch.sin(theta_e)  
-        
-        delta_v = torch.zeros((batch_size, 2)).to(self.device)   
-        delta_v[:,0] = self.Vp*cos_p-self.Ve*cos_e
-        delta_v[:,1] = self.Vp*sin_p-self.Ve*sin_e
 
-        delta_p = torch.zeros((batch_size, 2)).to(self.device)   
-        delta_p[:,0]=x_p-x_e
-        delta_p[:,1]=y_p-y_e
-
+        dim_num_cbf = other_state_batch.shape[1]
+        # print(dim_num_cbf)
+        # print(np.shape(theta_e),np.shape(theta_p))
+        delta_v = torch.zeros((batch_size, dim_num_cbf,2)).to(self.device)   
+        delta_v[:,:,0] = self.Vp*cos_p-self.Ve*cos_e.repeat(batch_size, dim_num_cbf).to(self.device)
+        delta_v[:,:,1] = self.Vp*sin_p-self.Ve*sin_e.repeat(batch_size, dim_num_cbf).to(self.device)
+        # print(np.shape(x_p))
+        # print(np.shape(x_e))
+        delta_p = torch.zeros((batch_size,dim_num_cbf, 2)).to(self.device)   
+        delta_p[:,:,0]=x_p-x_e.repeat(batch_size, dim_num_cbf).to(self.device)
+        delta_p[:,:,1]=y_p-y_e.repeat(batch_size, dim_num_cbf).to(self.device)
+        # print(np.shape(delta_p))
         ve_dot=torch.zeros((batch_size, 2)).to(self.device)  
         ve_dot[:,0]=-self.Ve*sin_e
         ve_dot[:,1]=-self.Ve*cos_e
+        # print(np.shape(delta_p))
+        # print(np.shape(ve_dot))
+        # print(delta_p)
+        # print(delta_v)
+        # print(torch.sum(delta_p*delta_v,axis=2))
 
-        g = 2*torch.bmm(delta_p,ve_dot)
+        # 已检查下面维度和计算均正确
+        g = 2*torch.bmm(delta_p,ve_dot.unsqueeze(-1))
+        # print(np.shape(g))
+        # print(np.shape(torch.cos(theta_p-theta_e.repeat(batch_size, 3))))
+        # print(np.shape(delta_p),np.shape(delta_v))
+        # print(np.shape(torch.sum(delta_p**2,axis=2)-self.r**2))
+        # print(np.shape(torch.sum(delta_p*delta_v,axis=2)))
         h = 2*(self.Vp**2+self.Ve**2-2*self.Vp*self.Ve*torch.cos(theta_p-theta_e))+\
-        self.K1*(torch.sum(delta_p**2,axis=1)-self.r**2)+2*self.K2*torch.bmm(delta_p,delta_v)
-        return g,h
+        self.K1*(torch.sum(delta_p**2,axis=2)-self.r**2)+2*self.K2*torch.sum(delta_p*delta_v,axis=2)
+        # print(np.shape(g.squeeze(-1)))
+        # print(g)
+        # print(g.squeeze(-1))
+        return g.squeeze(-1),h
 
 
 
