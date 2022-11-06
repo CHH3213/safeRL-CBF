@@ -5,7 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from td3.model import Actor,Critic
 from td3.utils import to_tensor,to_numpy
-from cbf_qp_layer import CBFQPLayer
+# from cbf_qp_layer import CBFQPLayer
+from cbf_qp_layer_bk import CBFQPLayer
 
 
 # Implementation of Twin Delayed Deep Deterministic Policy Gradients (TD3)

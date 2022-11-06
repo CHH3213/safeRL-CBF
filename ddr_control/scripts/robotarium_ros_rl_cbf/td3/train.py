@@ -16,7 +16,7 @@ from tqdm import tqdm
 import scipy.io as sio
 import sys
 import os
-
+import time
 sys.path.append(os.path.join(os.path.dirname(__file__), '../new_envs'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../envs'))
 sys.path.append('..')
@@ -76,6 +76,7 @@ def train(env, args, policy, file_name):
         actions[:, 0] = 0.15  # 线速度恒定
         done = False
         while not done:
+            start = time.time()
             t += 1
             episode_timesteps += 1
 
@@ -86,8 +87,8 @@ def train(env, args, policy, file_name):
                 if idx == index:
                     continue
 
-                # actions[idx, 1] = simple_pursuit(states[idx], states[index])
                 actions[idx, 1] = np.random.uniform(-1,1)
+                actions[idx, 1] = simple_pursuit(states[idx], states[index])
 
             safe_a = action            
             actions[index,1] = safe_a
@@ -117,6 +118,7 @@ def train(env, args, policy, file_name):
                 # Comet.ml logging
                 experiment.log_metric('loss/critic', critic_loss, step=t)
                 experiment.log_metric('loss/actor', actor_loss, step=t)
+            # print(time.time()-start)
         if experiment:
             experiment.log_metric('reward/train', episode_reward, step=i_episode)
 

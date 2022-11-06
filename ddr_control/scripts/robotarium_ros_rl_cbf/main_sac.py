@@ -58,7 +58,7 @@ if __name__ == "__main__":
                         help='Automatically adjust α (default: False)')
     parser.add_argument('--seed', type=int, default=-1, metavar='N',
                         help='random seed (default: 12345)')
-    parser.add_argument('--batch_size', type=int, default=256, metavar='N',
+    parser.add_argument('--batch_size', type=int, default=64, metavar='N',
                         help='batch size (default: 256)')
     parser.add_argument('--max_episodes', type=int, default=400, metavar='N',
                         help='maximum number of episodes (default: 400)')
@@ -95,10 +95,11 @@ if __name__ == "__main__":
 
     ## CBF
     parser.add_argument('--use_cbf', action="store_true", help='Should the cbf be used.')
-    parser.add_argument('--k_d', default=1.5, type=float)
-    parser.add_argument('--gamma_b', default=200, type=float, help="gamma of control barrier condition")
-    parser.add_argument('--l_p', default=0.15, type=float, help="Look-ahead distance for robotarium output.")
-
+    parser.add_argument('--Vp', default=1.2, type=float, help="pre-setting velocity of pursuer, not real velocity.")
+    parser.add_argument('--Ve', default=0.8, type=float, help="pre-setting velocity of evader, not real velocity.")
+    parser.add_argument('--r', default=0.4, type=float, help="safety critical distance.")
+    parser.add_argument('--K1', default=15, type=float, help="condition 1 of CBF.")
+    parser.add_argument('--K2', default=15, type=float, help="condition 2 of CBF.")
     args = parser.parse_args()
 
     index = 0

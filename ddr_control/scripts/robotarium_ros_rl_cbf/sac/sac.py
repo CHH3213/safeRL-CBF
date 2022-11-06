@@ -5,7 +5,8 @@ from sac.utils import soft_update, hard_update
 from sac.model import GaussianPolicy, QNetwork, DeterministicPolicy
 import numpy as np
 from sac.utils import to_tensor,to_numpy
-from cbf_qp_layer import CBFQPLayer
+# from cbf_qp_layer import CBFQPLayer
+from cbf_qp_layer_bk import CBFQPLayer
 
 
 class SAC(object):
@@ -55,10 +56,12 @@ class SAC(object):
     def select_action(self, state,other_state, evaluate=False, warmup=False):
 
         state = to_tensor(state, torch.FloatTensor, self.device)
+        other_state = to_tensor(other_state, torch.FloatTensor, self.device)
         # print(np.shape(state))
         expand_dim = len(state.shape) == 1
         if expand_dim:
             state = state.unsqueeze(0)
+            other_state = other_state.unsqueeze(0)
         if warmup:
             batch_size = state.shape[0]
             action = torch.zeros((batch_size, self.action_space.shape[0])).to(self.device)

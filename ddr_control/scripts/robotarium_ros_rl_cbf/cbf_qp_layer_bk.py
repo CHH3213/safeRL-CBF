@@ -4,13 +4,10 @@ import torch
 from sac.utils import to_tensor, prRed, prCyan
 from time import time
 from qpth.qp import QPFunction
-"""
-did not add slack variable
-
-#TODO: 修复bug——batch不是1时，会报错。
 
 """
-
+add slack variable
+"""
 class CBFQPLayer:
 
     def __init__(self, env, args, Vp,Ve,r,K1,K2):
@@ -107,7 +104,6 @@ class CBFQPLayer:
         safe_action_batch : torch.tensor
             The solution of the qp without the last dimension (the slack).
         """
-        # TODO: fix bug
         # print(np.shape(qs))
         Ghs = torch.cat((Gs, hs.unsqueeze(2)), -1)
         Ghs_norm = torch.max(torch.abs(Ghs), dim=2, keepdim=True)[0]
@@ -115,7 +111,7 @@ class CBFQPLayer:
         hs = hs / Ghs_norm.squeeze(-1)
 
         sol = self.cbf_layer(Ps, qs, Gs, hs, solver_args={"check_Q_spd": False, "maxIter": 10000, "notImprovedLim": 10, "eps": 1e-4})
-        safe_action_batch = sol
+        safe_action_batch = sol[:, :-1]
         # print(sol)
         # print(safe_action_batch)
         # print(np.shape(safe_action_batch))
@@ -181,7 +177,7 @@ class CBFQPLayer:
             Inequality constraint vector (G[u,eps] <= h) of size (num_constraints,)
         
         """
-        # TODO: 检查P,Q,G,H的维度是否符合
+        # DONE: 检查P,Q,G,H的维度是否符合
         batch_size = state_batch.shape[0] 
         # state_batch = torch.unsqueeze(state_batch, -1) # self agent's state
         # other_state_batch = torch.unsqueeze(other_state_batch, -1)  # nearest two agents and nearest obstacle'state
@@ -190,13 +186,14 @@ class CBFQPLayer:
 
         dim_u = action_batch.shape[1]  # dimension of control inputs
 
-        G = torch.zeros((batch_size, self.num_ineq_constraints,dim_u)).to(self.device) # G
+        G = torch.zeros((batch_size, self.num_ineq_constraints,dim_u+1)).to(self.device) # G
         H = torch.zeros((batch_size, self.num_ineq_constraints)).to(self.device)
         g, h = self._cbf_constraints(state_batch, other_state_batch, batch_size) # g:[batchsize,num_cbfs]
         ineq_constraint_counter = num_cbfs
 
         
         G[:, :num_cbfs,:dim_u] = g.unsqueeze(-1)
+        G[:, :num_cbfs, dim_u] = -1  # for slack
         # print(np.shape(g.unsqueeze(-1)))
 
         H[:, :num_cbfs] =h
@@ -210,10 +207,10 @@ class CBFQPLayer:
             H[:, ineq_constraint_counter] = -self.u_min
             ineq_constraint_counter +=1
 
-        P = torch.diag(torch.tensor([1.e0])).repeat(batch_size,1).to(self.device)
-        Q = torch.zeros((batch_size, dim_u )).to(self.device)
+        P = torch.diag(torch.tensor([1.e-4,1.e4])).repeat(batch_size,1, 1).to(self.device)
+        Q = torch.zeros((batch_size, dim_u + 1)).to(self.device)
         Q[:,:dim_u] = -2*action_batch
-        # print(np.shape(P),np.shape(Q),np.shape(G),np.shape(H))
+        # print(np.shape(G),np.shape(H))
 
         return P,Q,G,H
     

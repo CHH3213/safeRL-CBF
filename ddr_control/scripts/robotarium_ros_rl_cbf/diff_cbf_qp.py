@@ -257,7 +257,7 @@ class CBFQPLayer:
                 h[:, ineq_constraint_counter] = self.u_max[c] - action_batch[:, c].squeeze(-1)
                 ineq_constraint_counter += 1
 
-            # u_min <= u_nom + u ---> -u <= u_min - u_nom
+            # u_min <= u_nom + u ---> -u <= u_min + u_nom
             if self.u_min is not None:
                 G[:, ineq_constraint_counter, c] = -1
                 h[:, ineq_constraint_counter] = -self.u_min[c] + action_batch[:, c].squeeze(-1)
