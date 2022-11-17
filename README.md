@@ -2,7 +2,6 @@
 
 - 任务：将CBF结合进actor网络中，然后再通过critic更新
 
-> 2022.03开始
 
 ## Environments
 
@@ -45,3 +44,7 @@
 - `main_sac.py`是sac算法训练测试的主函数
 - `td3`文件夹存储的是td3算法相关的文件
 - `main_td3.py`是sac算法训练测试的主函数
+- `cbf_qp_layer.py`是没有加松弛变量下的、仅有角速度控制量的QP layer代码
+- `cbf_qp_layer_bk.py`是加松弛变量下的、仅有角速度控制量的QP layer代码
+
+其余请详细查看文件夹内的readme文档
